@@ -8,38 +8,69 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap');
   </style>
-  <link href="style.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link href="css/modal.css" rel="stylesheet">
   <script defer src="./main.js"></script>
 </head>
 <body>
   <header></header>
 
   <main>
-    <div class="newclient__modal modal-1">
+    <div class="modal">
 
-      <div class="modal-1__bg"></div>
-      <div class="modal-1__dialog">
+      <div class="modal__bg"></div>
+      <div class="modal__dialog">
 
-        <div class="modal-1__content">
+        <div class="modal__top">
 
           <h2>Новый клиент</h2>
 
-          <div class="modal-1__input-wrap">
-            <label class="modal-1__label" for="modal-1__surname">Фамилия<span>*</span></label>
-            <input id="modal-1__surname" type="text">
+          <div class="modal__close">
+            <button class="modal__close-btn btn-reset">
+              <svg width="29" height="29" viewBox="0 0 29 29" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M22.2332 7.73333L21.2665 6.76666L14.4998 13.5334L7.73318 6.7667L6.76652 7.73336L13.5332 14.5L6.76654 21.2667L7.73321 22.2333L14.4998 15.4667L21.2665 22.2334L22.2332 21.2667L15.4665 14.5L22.2332 7.73333Z" fill="#B0B0B0"/></svg>
+            </button>
           </div>
 
-          <div class="modal-1__input-wrap">
-            <label class="modal-1__label" for="modal-1__name">Имя<span>*</span></label>
-            <input id="modal-1__name" type="text">
+          <div class="modal__input-wrap">
+            <label class="modal__label" for="modal__surname">Фамилия<span>*</span></label>
+            <input id="modal__surname" type="text">
           </div>
 
-          <div class="modal-1__input-wrap">
-            <label class="modal-1__label" for="modal-1__lastname">Отчество</label>
-            <input id="modal-1__lastname" type="text">
+          <div class="modal__input-wrap">
+            <label class="modal__label" for="modal__name">Имя<span>*</span></label>
+            <input id="modal__name" type="text">
           </div>
-          <button id="modal-1__save-btn" class="btn-reset">Сохранить</button>
 
+          <div class="modal__input-wrap">
+            <label class="modal__label" for="modal__lastname">Отчество</label>
+            <input id="modal__lastname" type="text">
+          </div>
+
+        </div>
+
+        <div class="modal__middle">
+          <div class="modal__newContact-content">
+            <div class="modal__newContact">
+              <select id="modal__select-1" class="modal__select" name="name-contact">
+                <option value="phone">Телефон</option>
+                <option value="email">E-mail</option>
+                <option value="vk">ВКонтакте</option>
+                <option value="tg">Телеграм</option>
+                <option value="insta">Инстаграм</option>
+              </select>
+              <input id="modal__input-1" class="modal__input" type="text">
+            </div>
+          </div>
+
+          <button class="modal__addNewContact-btn btn-reset">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"> <g clip-path="url(#clip0_224_4420)"> <path d="M7.99998 4.66665C7.63331 4.66665 7.33331 4.96665 7.33331 5.33331V7.33331H5.33331C4.96665 7.33331 4.66665 7.63331 4.66665 7.99998C4.66665 8.36665 4.96665 8.66665 5.33331 8.66665H7.33331V10.6666C7.33331 11.0333 7.63331 11.3333 7.99998 11.3333C8.36665 11.3333 8.66665 11.0333 8.66665 10.6666V8.66665H10.6666C11.0333 8.66665 11.3333 8.36665 11.3333 7.99998C11.3333 7.63331 11.0333 7.33331 10.6666 7.33331H8.66665V5.33331C8.66665 4.96665 8.36665 4.66665 7.99998 4.66665ZM7.99998 1.33331C4.31998 1.33331 1.33331 4.31998 1.33331 7.99998C1.33331 11.68 4.31998 14.6666 7.99998 14.6666C11.68 14.6666 14.6666 11.68 14.6666 7.99998C14.6666 4.31998 11.68 1.33331 7.99998 1.33331ZM7.99998 13.3333C5.05998 13.3333 2.66665 10.94 2.66665 7.99998C2.66665 5.05998 5.05998 2.66665 7.99998 2.66665C10.94 2.66665 13.3333 5.05998 13.3333 7.99998C13.3333 10.94 10.94 13.3333 7.99998 13.3333Z" fill="#9873FF"/> </g> <defs> <clipPath id="clip0_224_4420"> <rect width="16" height="16" fill="white"/> </clipPath> </defs> </svg>
+            Добавить контакт
+          </button>
+
+        </div>
+        <div class="modal__bottom">
+          <button class="modal__saveContact-btn btn-reset">Сохранить</button>
+          <button class="modal__cancel-btn btn-reset">Отмена</button>
         </div>
       </div>
 

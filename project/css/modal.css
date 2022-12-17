@@ -1,0 +1,158 @@
+.modal {
+  position: fixed;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+}
+.modal__bg {
+  width: 100%;
+  height: 100%;
+  opacity: .6;
+  background-color: #333;
+  z-index: 10;
+}
+.modal__dialog {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 450px;
+  min-height: 400px;
+  margin: 0 auto;
+  background-color: #fff;
+  box-shadow: 0px 0px 35px #00000055;
+  z-index: 11;
+}
+
+/* .modal__top */
+
+.modal__top {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  padding: 25px 30px;
+}
+.modal__top h2 {
+  font-size: 18px;
+  line-height: 25px;
+  margin-bottom: 30px;
+}
+.modal__close {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  top: 15px;
+  right: 15px;
+}
+.modal__close:hover svg path {
+  fill: var(--color-accent);
+}
+.modal__input-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.modal__input-wrap:not(:last-child) {
+  margin-bottom: 30px;
+}
+.modal__input-wrap input {
+  width: 100%;
+  height: 25px;
+  border: none;
+  border-bottom: 1px solid #bbb;
+}
+.modal__label {
+  position: absolute;
+  top: 3px;
+  font-size: 14px;
+  color: #b0b0b0;
+  transition-property: top, font-size;
+  transition-duration: .2s;
+  transition-timing-function: ease-in-out;
+}
+.modal__label--active {
+  top: -18px;
+  font-size: 11px;
+}
+.modal__label span {
+ color: var(--color-accent);
+}
+
+/* .modal__middle */
+
+.modal__middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 25px 30px;
+  background-color: #efefef;
+}
+.modal__newContact-content {
+  width: 100%;
+  /* display: none; */
+}
+.modal__newContact {
+  display: flex;
+  margin-bottom: 25px;
+  border: 1px solid #bbb;
+}
+.modal__select {
+  display: block;
+  width: 123px;
+  margin: 0;
+  padding: 10px 10px 10px 12px;
+  border: none;
+  border-right: 1px solid #bbb;
+  font-size: 12px;
+  line-height: 16px;
+  appearance: none;
+  background-color: #ddd;
+  /* background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'), linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); */
+}
+.modal__input {
+  width: 100%;
+  border: none;
+}
+.modal__addNewContact-btn {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 14px;
+  transition: color .2s ease-in-out;
+}
+.modal__addNewContact-btn svg {
+  margin-right: 5px;
+}
+.modal__addNewContact-btn:hover {
+  color: var(--color-accent);
+}
+
+/* .modal__bottom */
+
+.modal__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 25px 30px;
+}
+.modal__saveContact-btn {
+  width: fit-content;
+  margin-bottom: 5px;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 13px 35px;
+  color: #fff;
+  background-color: var(--color-accent)
+}
+.modal__cancel-btn {
+  text-decoration: underline;
+  font-size: 12px;
+  line-height: 16px;
+}
