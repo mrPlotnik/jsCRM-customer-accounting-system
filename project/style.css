@@ -3,10 +3,14 @@
   margin: 0;
   box-sizing: border-box;
 }
-
 body {
-  background: #E5E5E5;
-  font-family: 'Inter', sans-serif;
+background: #E5E5E5;
+}
+body,
+input,
+textarea,
+button  {
+  font-family: 'Open Sans', sans-serif;
 }
 .container {
   width: 100%;
@@ -148,7 +152,7 @@ h1 {
   width: 12%;
 }
 .client__name {
-  width: 30%;
+  width: 25%;
 }
 .client__create,
 .client__update {
@@ -158,7 +162,7 @@ h1 {
   width: 13%;
 }
 .client__actions {
-  width: 15%;
+  width: 20%;
 }
 
 .client__contacts svg:not(:last-child) {
@@ -169,8 +173,23 @@ h1 {
   margin-right: 5px;
 }
 
+.button-wrap {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
 .btn-reset {
   padding: 0;
   border: none;
   background-color: transparent;
+  font-family: 'Open Sans', sans-serif;
 }
+.newclient__btn {
+  padding: 13px 27px;
+  border: 1px solid #9873FF;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 19px;
+  color: #9873FF;
+}
+
