@@ -7,16 +7,9 @@
   const URI = '/api/clients';
 
   // Кнопка "Добавить клиента"
-  const newClientBtn = document.querySelector('.newclient__btn');
-
-  // const client = {
-  //   name: 'Andrey',
-  //   surname: 'Plotnikov',
-  //   lastName: 'Sergeevich',
-  //   contacts: [
-  //     { type: 'Email', value: 'plotnik1992@gmail.com' },
-  //   ]
-  // };
+  const addClient = document.querySelector('.newclient__btn');
+  // вызывает модальное окно
+  addClient.addEventListener('click', showModal);
 
   showClients();
 
@@ -46,19 +39,19 @@
 
         // Функция возвращает заполненный div.row информацией с сервера
         function insertDataInRow(obj, clientData) {
-        // Id
-        obj.clientId.innerHTML = clientData.id;
+          // Id
+          obj.clientId.innerHTML = clientData.id;
 
-        // Имя
-        const fullName = getFullName(clientData);
-        obj.clientName.innerHTML = fullName;
+          // Имя
+          const fullName = getFullName(clientData);
+          obj.clientName.innerHTML = fullName;
 
-        // Дата и время создания
-        const create = dataFormat(clientData.createdAt);
-        obj.clientCreateDate.innerHTML = create.date;
-        obj.clientCreateTime.innerHTML = create.time;
+          // Дата и время создания
+          const create = dataFormat(clientData.createdAt);
+          obj.clientCreateDate.innerHTML = create.date;
+          obj.clientCreateTime.innerHTML = create.time;
 
-        // Дата и время изменения
+          // Дата и время изменения
         const update = dataFormat(clientData.updatedAt);
         obj.clientUpdateDate.innerHTML = update.date;
         obj.clientUpdateTime.innerHTML = update.time;
@@ -201,63 +194,59 @@
 
   }
 
+  // Вешаем обработчик на кнопку "Добавить контакт"
+  const addContact = document.querySelector('.modal__addNewContact-btn');
+  addContact.addEventListener('click', createNewContact)
 
-  // Клик по кнопкае "Добавить клиента"
-  // Вызывает модальное окно
-  newClientBtn.addEventListener('click', showModal);
+  // Все инпуты из .modal__top
+  // Нужны для поведения лейблов и их очистки
+  const allInputs = document.querySelectorAll('.modal__input-wrap');
 
-  function showModal() {
+  // Модальное окно
+  // Нужно для функции showModal() и closeModal()
+  const modal = document.querySelector('.modal');
 
-    // Отображаем окно "Новый клиент"
-    const newClientModal = document.querySelector('.modal');
-    fadeIn(newClientModal, 200, 'flex');
+  // Вешаем обработчик на кнопку "Сохранить"
+  const saveBtn = document.querySelector('.modal__saveContact-btn');
+  saveBtn.addEventListener('click', saveContact )
 
-    // Все инпуты окна
-    const allInputsWrap = document.querySelectorAll('.modal__input-wrap');
+  // Функция создает селект и инпут для нового контакта
+  function createNewContact() {
+    // Сюда все монтируем
+    const newContact = document.querySelector('.modal__newContact-content');
 
+    // Делаем контейнер для селекта
+    const newContactDiv = document.createElement('div');
+    newContactDiv.classList.add('modal__newContact');
 
-    (function qwe() {
-      const addNewContactBtn = document.querySelector('.modal__addNewContact-btn');
-      addNewContactBtn.addEventListener('click', createNewContact)
-    })()
+    // Делаем один селект
+    const select = document.createElement('select');
+    select.classList.add('modal__select');
 
+    // Выпадающий список селекта
+    const optionPhone = document.createElement('option');
+    optionPhone.setAttribute('value', 'phone');
+    optionPhone.innerHTML = 'Телефон';
+    const optionEmail = document.createElement('option');
+    optionEmail.setAttribute('value', 'email');
+    optionEmail.innerHTML = 'E-mail';
+    const optionVk = document.createElement('option');
+    optionVk.setAttribute('value', 'vk');
+    optionVk.innerHTML = 'ВКонтакте';
+    const optionTg = document.createElement('option');
+    optionTg.setAttribute('value', 'tg');
+    optionTg.innerHTML = 'Телеграм';
+    const optionInsta = document.createElement('option');
+    optionInsta.setAttribute('value', 'insta');
+    optionInsta.innerHTML = 'Инстаграм';
 
-    function createNewContact() {
-      // Сюда все монтируем
-      const newContact = document.querySelector('.modal__newContact-content');
-
-      // Делаем контейнер для селекта
-      const newContactDiv = document.createElement('div');
-      newContactDiv.classList.add('modal__newContact');
-
-      // Делаем один селект
-      const select = document.createElement('select');
-      select.classList.add('modal__select');
-
-      // Выпадающий список селекта
-      const optionPhone = document.createElement('option');
-      optionPhone.setAttribute('value', 'phone');
-      optionPhone.innerHTML = 'Телефон';
-      const optionEmail = document.createElement('option');
-      optionEmail.setAttribute('value', 'email');
-      optionEmail.innerHTML = 'E-mail';
-      const optionVk = document.createElement('option');
-      optionVk.setAttribute('value', 'vk');
-      optionVk.innerHTML = 'ВКонтакте';
-      const optionTg = document.createElement('option');
-      optionTg.setAttribute('value', 'tg');
-      optionTg.innerHTML = 'Телеграм';
-      const optionInsta = document.createElement('option');
-      optionInsta.setAttribute('value', 'insta');
-      optionInsta.innerHTML = 'Инстаграм';
-
-      // Монтируем список в наш селект
-      select.append(
-        optionPhone,
-        optionEmail,
-        optionVk,
-        optionTg,
-        optionInsta
+    // Монтируем список в наш селект
+    select.append(
+      optionPhone,
+      optionEmail,
+      optionVk,
+      optionTg,
+      optionInsta
       );
 
       // Делаем один инпут
@@ -273,48 +262,18 @@
 
       // Передаем select в плагин choices.js
       choises(select);
-    }
+  }
 
-
-
-    // Если кликнуть вне диалогового окна,
-    // на крестик или кнопку "отмена",
-    // то окно закроется, а инпуты очистятся
-    (function() {
-      const closeBtn = document.querySelector('.modal__close-btn');
-      const cancelBtn = document.querySelector('.modal__cancel-btn');
-      closeBtn.addEventListener('click', closeModal);
-      cancelBtn.addEventListener('click', closeModal);
-
-      const modal = document.querySelector('.modal__dialog');
-      newClientModal.addEventListener( 'click', (e) => {
-        const contains = e.composedPath().includes(modal);
-        if ( !contains ) {
-          fadeOut(newClientModal, 200);
-          removeValue();
-        }
-      })
-
-    })();
-
-    // Закрытие модального окна из любого места родительской функции
-    function closeModal() {
-      fadeOut(newClientModal, 200);
-      removeValue();
-    }
-
-    // Очистка инпутов
-    function removeValue() {
-      for(let i = 0; i < allInputsWrap.length; i++) {
-        const input = allInputsWrap[i].lastElementChild.value = '';
-      }
-    }
+  // Показываем модальное окно
+  function showModal() {
+    // Отображаем окно "Новый клиент"
+    fadeIn(modal, 200, 'flex');
 
     // Поведение label`ов
     (function() {
-      for(let i = 0; i < allInputsWrap.length; i++) {
-        const label = allInputsWrap[i].firstElementChild;
-        const input = allInputsWrap[i].lastElementChild;
+      for(let i = 0; i < allInputs.length; i++) {
+        const label = allInputs[i].firstElementChild;
+        const input = allInputs[i].lastElementChild;
         // Есть кейсы, где инпут пустой, а лейбл вверху
         // Строчка ниже решает проблему
         label.classList.remove('modal__label--active');
@@ -328,40 +287,72 @@
         }
       }
     })();
+  }
 
+  // Если кликнуть вне диалогового окна,
+  // на крестик или кнопку "отмена", то окно закроется,
+  // инпуты очистятся и удалятся дополнительные селекты
+  (function() {
+    const closeBtn = document.querySelector('.modal__close-btn');
+    const cancelBtn = document.querySelector('.modal__cancel-btn');
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
 
-    // Взять данные из инпутов и отправить на сервер
-    (function() {
-      const saveBtn = document.querySelector('.modal__saveContact-btn');
+    modal.addEventListener( 'click', (e) => {
+      const modalDialog = document.querySelector('.modal__dialog');
+      const contains = e.composedPath().includes(modalDialog);
+      console.log(contains);
+      if ( !contains ) {
+        fadeOut(modal, 200);
+        closeModal();
+      }
+    })
 
+  })();
+
+  // Закрытие модального окна из любого места родительской функции
+  function closeModal() {
+    fadeOut(modal, 200);
+    clearModal();
+
+    // Очистка модального окна
+    function clearModal() {
+      // Удаление инпутов
+      (function() {
+        for(let i = 0; i < allInputs.length; i++) {
+          const input = allInputs[i].lastElementChild.value = '';
+        }
+      })();
+      // Удаление селектов
+      (function() {
+        const parent = document.querySelector('.modal__newContact-content');
+        while (parent.firstChild) {
+          parent.removeChild(parent.firstChild);
+        }
+      })();
+    }
+  }
+
+  // Взять данные из инпутов и отправить на сервер
+  async function saveContact() {
       const nameInput = document.getElementById('modal__name');
       const surnameInput = document.getElementById('modal__surname');
       const lastname = document.getElementById('modal__lastname');
 
-      saveBtn.addEventListener('click', async () => {
+      let data = {};
+      data.name = nameInput.value.trim();
+      data.surname = surnameInput.value.trim();
+      data.lastName = lastname.value.trim();
+      data.contacts = [];
 
-        let data = {};
-        data.name = nameInput.value.trim();
-        data.surname = surnameInput.value.trim();
-        data.lastName = lastname.value.trim();
-        data.contacts = [];
+      await postClient(data);
 
-        await postClient(data);
+      // Закрываем модальное окно
+      closeModal();
 
-        // Закрываем модальное окно
-        closeModal();
-
-        // Перерисовываем приложение
-        showClients();
-
-      })
-
-    })();
-
-  }
-
-
-
+      // Перерисовываем приложение
+      showClients();
+  };
 
   // ------------------------------------
   // Анимация
@@ -411,18 +402,16 @@
     return clients;
   };
 
+  // ------------------------------------
+  // Сторонние плагины
+  // ------------------------------------
 
-
-
-
-
-  //  choices.js
+  // Инициализация плагина choices.js
   function choises(el) {
     const choises = new Choices(el,{
       searchEnabled: false,
       itemSelectText: ''
     })
   };
-
 
 })();

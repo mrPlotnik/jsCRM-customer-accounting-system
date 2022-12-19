@@ -1,7 +1,18 @@
 :root {
   --color-accent: #9873FF;
+  --color-accent-dark: #7442fc;
   --color-accent-light: #AE91FD;
   --color-white: #fff;
+
+  --color-gray-5: #f1f1f1;
+  --color-gray-10: #e5e5e5;
+  --color-gray-15: #d8d8d8;
+  --color-gray-20: #ccc;
+  --color-gray-40: #999;
+  --color-gray-60: #666;
+  --color-gray-80: #333;
+
+  --transition-duration: .2s
 }
 
 * {
