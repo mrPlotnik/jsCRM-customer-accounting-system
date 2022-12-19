@@ -1,5 +1,7 @@
 :root {
   --color-accent: #9873FF;
+  --color-accent-light: #AE91FD;
+  --color-white: #fff;
 }
 
 * {
@@ -136,4 +138,5 @@ h1 {
   line-height: 19px;
   color: #9873FF;
 }
+
 

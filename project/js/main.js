@@ -270,9 +270,10 @@
 
       // Монтируем все в DOM
       newContact.append(newContactDiv);
+
+      // Передаем select в плагин choices.js
+      choises(select);
     }
-
-
 
 
 
@@ -409,5 +410,19 @@
     // console.log(clients[0]);
     return clients;
   };
+
+
+
+
+
+
+  //  choices.js
+  function choises(el) {
+    const choises = new Choices(el,{
+      searchEnabled: false,
+      itemSelectText: ''
+    })
+  };
+
 
 })();

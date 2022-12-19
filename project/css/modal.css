@@ -1,3 +1,13 @@
+:root {
+  --color-gray-5: #f1f1f1;
+  --color-gray-10: #e5e5e5;
+  --color-gray-20: #ccc;
+  --color-gray-40: #999;
+  --color-gray-60: #666;
+  --color-gray-80: #333;
+
+}
+
 .modal {
   position: fixed;
   display: none;
@@ -11,7 +21,7 @@
   width: 100%;
   height: 100%;
   opacity: .6;
-  background-color: #333;
+  background-color: var(--color-gray-80);
   z-index: 10;
 }
 .modal__dialog {
@@ -22,7 +32,7 @@
   width: 450px;
   min-height: 400px;
   margin: 0 auto;
-  background-color: #fff;
+  background-color: var(--color-white);
   box-shadow: 0px 0px 35px #00000055;
   z-index: 11;
 }
@@ -64,13 +74,23 @@
   width: 100%;
   height: 25px;
   border: none;
-  border-bottom: 1px solid #bbb;
+  border-bottom: 1px solid var(--color-gray-20);
+  font-weight: 600;
+  font-size: 14px;
+  transition: border-bottom-color .2s ease-in-out;
+}
+.modal__input-wrap input:hover {
+  border-bottom-color: var(--color-accent);
+}
+.modal__input-wrap input:focus {
+  outline: none;
+  border-bottom-color: var(--color-accent);
 }
 .modal__label {
   position: absolute;
   top: 3px;
   font-size: 14px;
-  color: #b0b0b0;
+  color: var(--color-gray-40);
   transition-property: top, font-size;
   transition-duration: .2s;
   transition-timing-function: ease-in-out;
@@ -91,7 +111,7 @@
   align-items: center;
   width: 100%;
   padding: 25px 30px;
-  background-color: #efefef;
+  background-color: var(--color-gray-5);
 }
 .modal__newContact-content {
   width: 100%;
@@ -100,24 +120,83 @@
 .modal__newContact {
   display: flex;
   margin-bottom: 25px;
-  border: 1px solid #bbb;
+  border-top: 1px solid var(--color-gray-20);
+  border-bottom: 1px solid var(--color-gray-20);
 }
-.modal__select {
-  display: block;
+
+.choices {
+  flex-shrink: 0;
   width: 123px;
-  margin: 0;
-  padding: 10px 10px 10px 12px;
-  border: none;
-  border-right: 1px solid #bbb;
-  font-size: 12px;
-  line-height: 16px;
-  appearance: none;
-  background-color: #ddd;
-  /* background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'), linear-gradient(to bottom, #ffffff 0%,#e5e5e5 100%); */
+  margin-bottom: 0;
 }
+.choices__inner {
+  display: flex;
+  align-items: center;
+  height: 37px;
+  min-height: unset;
+  border: none;
+  border-right: 1px solid var(--color-gray-20);
+  border-left: 1px solid var(--color-gray-20);
+  border-radius: 0;
+	font-size: 12px;
+  background-color: var(--color-gray-10);
+  transition: background-color .2s ease-in-out;
+}
+.choices__inner:hover {
+  background-color: var(--color-gray-10);
+}
+.choices__list[aria-expanded] .choices__item--selectable {
+  padding-right: 0;
+}
+.choices__list[aria-expanded] .choices__item {
+  font-size: 12px;
+}
+.is-open .choices__inner {
+  border-radius: 0;
+}
+.choices__list[aria-expanded] {
+  border-radius: 0;
+  margin-top: 0;
+}
+.choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+  background-color: var(--color-gray-10);
+}
+.choices {
+  overflow: visible;
+}
+.choices__list--dropdown {
+  opacity: 0;
+  transition: all .2s ease-in-out;
+}
+.is-active.choices__list--dropdown {
+  opacity: 1;
+}
+
+.choices[data-type*="select-one"]::after {
+  width: 12px;
+  height: 12px;
+  border-style: none;
+  margin: 0;
+  top: 36%;
+  background-image: url(../img/arrow.svg);
+  background-repeat: no-repeat;
+  transition: rotate .2s ease-in-out;
+}
+.choices[data-type*="select-one"].is-open::after  {
+  margin: 0;
+  rotate: 180deg;
+}
+
 .modal__input {
   width: 100%;
+  padding-left: 15px;
   border: none;
+  border-right: 1px solid var(--color-gray-20);
+  font-weight: 600;
+  font-size: 14px;
+}
+.modal__input:focus-visible {
+  outline: none;
 }
 .modal__addNewContact-btn {
   display: flex;
@@ -144,15 +223,23 @@
 }
 .modal__saveContact-btn {
   width: fit-content;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
   font-weight: 600;
   font-size: 14px;
   padding: 13px 35px;
-  color: #fff;
-  background-color: var(--color-accent)
+  color: var(--color-white);
+  background-color: var(--color-accent);
+  transition:  background-color .2s ease-in-out;
+}
+.modal__saveContact-btn:hover {
+  background-color: var(--color-accent-light);
 }
 .modal__cancel-btn {
   text-decoration: underline;
   font-size: 12px;
   line-height: 16px;
+  transition: color .2s ease-in-out;
+}
+.modal__cancel-btn:hover {
+  color: var(--color-accent);
 }
