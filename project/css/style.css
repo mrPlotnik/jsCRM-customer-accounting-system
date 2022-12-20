@@ -40,6 +40,11 @@ button  {
   flex-wrap: wrap;
   width: 100%;
 }
+.col {
+  display: flex;
+  align-items: center;
+  height: inherit;
+}
 .btn-reset {
   padding: 0;
   border: none;
@@ -65,14 +70,33 @@ h1 {
 }
 
 
+.sort {}
+.sort__row {
+  height: 30px;
+  margin: 0;
+  padding: 0 20px;
+  margin-bottom: 10px;
+}
+.sort__row .col {
+  align-items: flex-end;
+  font-size: 12px;
+  line-height: 16px;
+  color: #B0B0B0;
+}
+.sort__row .col:not(:last-child) {
+  padding-right: 20px;
+}
+
+
+
 
 
 .clients-wrap {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
   align-items: center;
   background-color: #fff;
-  margin-bottom: 1rem;
+  margin-bottom: 20px;
 }
 .client-row {
   height: 60px;
@@ -80,30 +104,22 @@ h1 {
   padding: 0 20px;
   border-bottom: 1px solid #C8C5D1;
 }
-.client-row .col {
-  display: flex;
-  align-items: center;
-  height: inherit;
-}
+
 .client-row .col:not(:last-child) {
   padding-right: 20px;
 }
-.client__id {
+.clients-wrap .col {
+  font-size: 14px;
+  line-height: 19px;
+}
+.clients-wrap .client__id {
   font-size: 12px;
   line-height: 16px;
   color: #b0b0b0;
 }
-.client__name,
-.client__create,
-.client__update {
-  font-size: 14px;
-  line-height: 19px;
-}
 .client__time,
 .client__time {
   padding-left: 10px;
-  font-size: 14px;
-  line-height: 19px;
   color: #b0b0b0;
 }
 .client__actions {
