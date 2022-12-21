@@ -50,6 +50,7 @@ button  {
   border: none;
   background-color: transparent;
   font-family: 'Open Sans', sans-serif;
+  cursor: pointer;
 }
 
 header {
@@ -82,6 +83,7 @@ h1 {
   font-size: 12px;
   line-height: 16px;
   color: #B0B0B0;
+  cursor: pointer;
 }
 .sort__row .col:not(:last-child) {
   padding-right: 20px;
@@ -143,8 +145,16 @@ h1 {
   width: 20%;
 }
 
+
 .client__contacts svg:not(:last-child) {
   margin-right: 0.25rem;
+}
+.client__actions button {
+  display: flex;
+  transition: color .2s ease-in-out;
+}
+.client__actions button:hover {
+  color: var(--color-accent);
 }
 
 .contact:not(:last-child) {
@@ -174,4 +184,27 @@ h1 {
 }
 .client__contact-link:hover {
   scale: 1.2;
+}
+
+
+
+
+
+
+
+
+#modal-delete  .modal__dialog {
+
+  padding: 25px 90px;
+}
+#modal-delete  .modal__dialog span {
+  margin-bottom: 15px;
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 25px;
+}
+#modal-delete  .modal__dialog p {
+  text-align: center;
+  font-size: 14px;
+  margin-bottom: 25px;
 }

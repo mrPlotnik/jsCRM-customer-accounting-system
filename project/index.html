@@ -18,7 +18,8 @@
   <header></header>
 
   <main>
-    <div class="modal">
+
+    <div id="modal-add" class="modal">
 
       <div class="modal__bg"></div>
       <div class="modal__dialog">
@@ -60,12 +61,22 @@
         </div>
 
         <div class="modal__bottom">
-          <button class="modal__saveContact-btn btn-reset">Сохранить</button>
-          <button class="modal__cancel-btn btn-reset">Отмена</button>
+          <button id="modal-add__primary-btn" class="modal__btn-primary btn-reset">Сохранить</button>
+          <button id="modal-add__secondary-btn" class="modal__btn-secondary btn-reset">Отмена</button>
         </div>
 
       </div>
 
+    </div>
+
+    <div id="modal-delete" class="modal">
+      <div class="modal__bg"></div>
+      <div class="modal__dialog">
+        <span>Удалить клиента</span>
+        <p>Вы действительно хотите удалить данного клиента?</p>
+        <button id="modal-delete__primary-btn"class="btn-reset modal__btn-primary">Удалить</button>
+        <button id="modal-delete__secondary-btn"class="btn-reset modal__btn-secondary">Отмена</button>
+      </div>
     </div>
 
     <div class="container">

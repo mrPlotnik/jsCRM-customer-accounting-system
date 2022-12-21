@@ -219,8 +219,8 @@
   width: 100%;
   padding: 25px 30px;
 }
-.modal__saveContact-btn {
-  width: fit-content;
+.modal__btn-primary {
+  /* width: fit-content; */
   margin-bottom: 15px;
   font-weight: 600;
   font-size: 14px;
@@ -229,15 +229,15 @@
   background-color: var(--color-accent);
   transition:  background-color var(--transition-duration) ease-in-out;
 }
-.modal__saveContact-btn:hover {
+.modal__btn-primary:hover {
   background-color: var(--color-accent-light);
 }
-.modal__cancel-btn {
+.modal__btn-secondary {
   text-decoration: underline;
   font-size: 12px;
   line-height: 16px;
   transition: color var(--transition-duration) ease-in-out;
 }
-.modal__cancel-btn:hover {
+.modal__btn-secondary:hover {
   color: var(--color-accent);
 }
