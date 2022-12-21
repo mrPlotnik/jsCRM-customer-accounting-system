@@ -11,17 +11,51 @@
   // вызывает модальное окно
   addClient.addEventListener('click', showModal);
 
+  let allClients = [];
 
+  show();
 
-  let allClients = await getClients();
+  async function show() {
+    // Записываем в переменную массив клиентов с сервера
+    allClients = (await getClients()).slice(0);
 
-  (function() {
-    for (let i = 0; i < allClients.length; i++) {
-      allClients[i].fullname = getFullName(allClients[i]);
-    }
-  })();
+    // Подготовительные изменения массива контактов
+    (function() {
 
-  createRow(allClients);
+      // Добавляем ключ fullname в объекты
+      for (let i = 0; i < allClients.length; i++) {
+        allClients[i].fullname = getFullName(allClients[i]);
+      };
+
+      // Добавляем id для контактов (для сортировки)
+      for (let i = 0; i < allClients.length; i++) {
+        const contacts = allClients[i].contacts;
+        for (let z = 0; z < contacts.length; z++) {
+          let contact = contacts[z];
+          if (contact.type === 'phone') {
+            contact.id = 1;
+          } else if (contact.type === 'mail') {
+            contact.id = 2;
+          } else if (contact.type === 'tg') {
+            contact.id = 3;
+          } else if (contact.type === 'vk') {
+            contact.id = 4;
+          } else if (contact.type === 'insta') {
+            contact.id = 5;
+          }
+        }
+      }
+
+      // Предсортировка контактов у каждого клиента
+      for (let i = 0; i < allClients.length; i++) {
+        newArr = sortContacts(allClients[i].contacts);
+      }
+
+    })();
+
+    // Создаем и заполняем данными div.row для каждого клиента
+    createRow(allClients);
+  }
 
   // Создаем и заполняем елемент row для каждого клиента
   function createRow(allClients) {
@@ -220,14 +254,9 @@
       month: 'numeric',
     };
     const newDate = new Date(createDate).toLocaleString("ru", options);
-
     const date = newDate.split(',')[0];
     const time = newDate.split(' ')[1];
-
-    return {
-      date,
-      time
-    };
+    return { date, time };
   }
 
 
@@ -235,13 +264,15 @@
   // Сортировка
   // ------------------------------------
 
+  // Сортировка контактов каждого клиента
+  function sortContacts(clientContacts) {
+    clientContacts.sort((a, b) => a.id > b.id)
+  }
 
   const sortId = document.getElementById('sort-id');
   const sortName = document.getElementById('sort-name');
-  // const sortCreate = document.getElementById('sort-create');
-  // const sortUpdate = document.getElementById('sort-update');
-  // const sortContacts = document.getElementById('sort-contacts');
-  // const sortActions = document.getElementById('sort-actions');
+  const sortCreate = document.getElementById('sort-create');
+  const sortUpdate = document.getElementById('sort-update');
 
   sortId.addEventListener('click', sortById);
   let sortByIdInvert = 1;
@@ -249,10 +280,11 @@
   sortName.addEventListener('click', sortByName);
   let sortByNameInvert = 1;
 
-  // sortCreate.addEventListener('click', sortClient('create'));
-  // sortUpdate.addEventListener('click', sortClient('update'));
-  // sortContacts.addEventListener('click', sortClient('contacts'));
-  // sortActions.addEventListener('click', sortClient("actions"));
+  sortCreate.addEventListener('click', sortByCreateDate);
+  let sortByCreateDateInvert = 1;
+
+  sortUpdate.addEventListener('click',  sortByUpdateDate);
+  let sortByUpdateDateInvert = 1;
 
   function sortByName() {
     if (sortByNameInvert) {
@@ -272,6 +304,44 @@
     } else {
       allClients.sort((a, b) => +a.id < +b.id ? 1 : -1)
       sortByIdInvert = 1;
+    }
+    createRow(allClients);
+  }
+
+  function sortByCreateDate() {
+    if (sortByCreateDateInvert) {
+      allClients.sort((a, b) => {
+        let dateA = new Date(a.createdAt);
+        let dateB = new Date(b.createdAt);
+        return dateA - dateB;
+      });
+      sortByCreateDateInvert = 0;
+    } else {
+      allClients.sort((a, b) => {
+        let dateA = new Date(a.createdAt);
+        let dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      });
+      sortByCreateDateInvert = 1;
+    }
+    createRow(allClients);
+  }
+
+  function sortByUpdateDate() {
+    if (sortByUpdateDateInvert) {
+      allClients.sort((a, b) => {
+        let dateA = new Date(a.createdAt);
+        let dateB = new Date(b.createdAt);
+        return dateA - dateB;
+      });
+      sortByUpdateDateInvert = 0;
+    } else {
+      allClients.sort((a, b) => {
+        let dateA = new Date(a.createdAt);
+        let dateB = new Date(b.createdAt);
+        return dateB - dateA;
+      });
+      sortByUpdateDateInvert = 1;
     }
     createRow(allClients);
   }
@@ -463,7 +533,7 @@
     allClients = await getClients();
 
     // Перерисовываем приложение
-    showClients();
+    show();
   };
 
 
@@ -506,7 +576,6 @@
       body: JSON.stringify(data)
     });
     const client = await response.json();
-    console.log(client);
     return client;
   };
 
