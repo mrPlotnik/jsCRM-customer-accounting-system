@@ -38,9 +38,18 @@
   padding: 25px 30px;
 }
 .modal__top h2 {
+  display: inline-block;
+  width: fit-content;
   font-size: 18px;
   line-height: 25px;
   margin-bottom: 30px;
+}
+.modal__top h2 span {
+  margin-left: 10px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  color: #B0B0B0;
 }
 .modal__close {
   position: absolute;

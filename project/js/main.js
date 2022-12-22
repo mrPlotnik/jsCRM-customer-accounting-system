@@ -359,24 +359,50 @@
   // Кнопка "Добавить клиента"
   const addClientBtn = document.querySelector('.newclient__btn');
   // вызывает модальное окно
-  addClientBtn.addEventListener('click', showModalAdd);
+  addClientBtn.addEventListener('click', () => { showModal('Новый клиент') });
 
   // Модальное окно "Добавить клиента"
-  // Нужно для функции showModalAdd() и closeModalAdd()
+  // Нужно для функции showModal() и closeModalAdd()
   const modalAdd = document.getElementById('modal-add');
 
+  // Все инпуты из .modal__top
+  // Нужны для поведения лейблов и их очистки
+  const allInputsWrap = document.querySelectorAll('.modal__input-wrap');
+
   // Отображаем модальное окно "Новый клиент"
-  function showModalAdd() {
+  function showModal(title, client) {
+    clearModalAdd();
     fadeIn(modalAdd, 200, 'flex');
+
+    const h2 = document.querySelector('.modal__top h2');
+
+    if (client !== undefined) {
+      h2.innerHTML = `${title}<span>ID: ${client.id}</span>`;
+      const inputs = getAllInputs();
+      inputs.nameInput.value = client.name;
+      inputs.surnameInput.value = client.surname;
+      inputs.lastnameInput.value = client.lastName
+
+      for(let i = 0; i < client.contacts.length; i++) {
+        const contact = createNewContact();
+        // Тут метод из библиотеки choises.js
+        contact.choisesObj.setChoiceByValue(client.contacts[i].type);
+        contact.input.value = client.contacts[i].value;
+      }
+
+    } else h2.innerHTML = title;
 
     // Поведение label`ов
     (function() {
-      for(let i = 0; i < allInputs.length; i++) {
-        const label = allInputs[i].firstElementChild;
-        const input = allInputs[i].lastElementChild;
-        // Есть кейсы, где инпут пустой, а лейбл вверху
-        // Строчка ниже решает проблему
+      for(let i = 0; i < allInputsWrap.length; i++) {
+        const label = allInputsWrap[i].firstElementChild;
+        const input = allInputsWrap[i].lastElementChild;
+
         label.classList.remove('modal__label--active');
+
+        if (input.value) {
+          label.classList.add('modal__label--active');
+        }
         input.onfocus = function() {
           label.classList.add('modal__label--active');
         }
@@ -431,53 +457,57 @@
       optionVk,
       optionTg,
       optionInsta
-      );
+    );
 
-      // Делаем один инпут
-      const input = document.createElement('input');
-      input.classList.add('modal__input');
-      input.setAttribute('type', 'text');
+    // Делаем один инпут
+    const input = document.createElement('input');
+    input.classList.add('modal__input');
+    input.setAttribute('type', 'text');
 
-      // Монтируем селект и инпут в контейнер
-      newContactDiv.append(select, input);
+    // Монтируем селект и инпут в контейнер
+    newContactDiv.append(select, input);
 
-      // Монтируем все в DOM
-      newContact.append(newContactDiv);
+    // Монтируем все в DOM
+    newContact.append(newContactDiv);
 
-      // Передаем select в плагин choices.js
-      choises(select);
+    // Передаем select в плагин choices.js
+    const choisesObj = choises(select);
+
+    return { choisesObj, input };
   }
-
-  // Все инпуты из .modal__top
-  // Нужны для поведения лейблов и их очистки
-  const allInputs = document.querySelectorAll('.modal__input-wrap');
 
   // Кнопка "Сохранить"
   const saveBtnBtn = document.getElementById('modal-add__primary-btn');
   // отправляет данные на сервер
   saveBtnBtn.addEventListener('click', saveContact )
 
-  // Взять данные из инпутов и отправить на сервер
-  async function saveContact() {
+  // Возврящает все инпуты (массив объектов) из модального окна
+  function getAllInputs() {
     const nameInput = document.getElementById('modal__name');
     const surnameInput = document.getElementById('modal__surname');
-    const lastname = document.getElementById('modal__lastname');
+    const lastnameInput = document.getElementById('modal__lastname');
+    return { nameInput, surnameInput, lastnameInput };
+  }
+
+  // Взять данные из инпутов и отправить на сервер
+  async function saveContact() {
+    const inputs = getAllInputs();
 
     const newContact = document.querySelector('.modal__newContact');
 
     let data = {};
-    data.name = nameInput.value.trim();
-    data.surname = surnameInput.value.trim();
-    data.lastName = lastname.value.trim();
+    data.name = inputs.nameInput.value.trim();
+    data.surname = inputs.surnameInput.value.trim();
+    data.lastName = inputs.lastnameInput.value.trim();
     data.contacts = [];
 
     if (newContact) {
       const allSelects = document.querySelectorAll('.modal__select');
-      const allInputs = document.querySelectorAll('.modal__input');
+      const allContactInputs = document.querySelectorAll('.modal__input');
 
       for(let i = 0; i < allSelects.length; i++) {
         const selectValue = allSelects[i].value;
-        const inputValue = allInputs[i].value;
+        const inputValue = allContactInputs[i].value;
         let obj = {};
 
         obj.type = selectValue;
@@ -521,31 +551,35 @@
   // Закрытие модального окна из любого места родительской функции
   function closeModalAdd() {
     fadeOut(modalAdd, 200);
-
-    // Очистка модального окна
-    (function clearModalAdd() {
-      // Удаление инпутов
-      (function() {
-        for(let i = 0; i < allInputs.length; i++) {
-          const input = allInputs[i].lastElementChild.value = '';
-        }
-      })();
-      // Удаление селектов
-      (function() {
-        const parent = document.querySelector('.modal__newContact-content');
-        while (parent.firstChild) {
-          parent.removeChild(parent.firstChild);
-        }
-      })();
-    })();
+    clearModalAdd();
   }
+
+  // Очистка модального окна
+  function clearModalAdd() {
+    // Удаление инпутов
+    (function() {
+      for(let i = 0; i < allInputsWrap.length; i++) {
+        const input = allInputsWrap[i].lastElementChild.value = '';
+      }
+    })();
+    // Удаление селектов
+    (function() {
+      const parent = document.querySelector('.modal__newContact-content');
+      while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+      }
+    })();
+  };
 
   // ------------------------------------
   // Поведение модального окна "Изменить клиента"
   // ------------------------------------
 
-  function updateClient(e) {
-    console.log(e.target.getAttribute('data-id'));
+  async function updateClient(e) {
+    const id = e.target.getAttribute('data-id');
+    const client = await getClient(id);
+
+    showModal('Изменить клиента',client);
   }
 
   // ------------------------------------
@@ -625,6 +659,13 @@
     return clients;
   };
 
+  // Получить клиента по id
+  async function getClient(id) {
+    const response = await fetch(`${URL}${URI}/${id}`);
+    const clients = await response.json();
+    return clients;
+  };
+
   // Удалить клиента
   async function serverDeleteClient(id) {
     const response = await fetch(`${URL}${URI}/${id}`, {
@@ -646,6 +687,7 @@
       searchEnabled: false,
       itemSelectText: ''
     })
+    return choises;
   };
 
 })();
