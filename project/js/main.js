@@ -29,7 +29,7 @@
           let contact = contacts[z];
           if (contact.type === 'phone') {
             contact.id = 1;
-          } else if (contact.type === 'mail') {
+          } else if (contact.type === 'email') {
             contact.id = 2;
           } else if (contact.type === 'tg') {
             contact.id = 3;
@@ -46,7 +46,16 @@
         newArr = sortContacts(allClients[i].contacts);
       }
 
+      // Предсортировка всего массива по дате создания
+      (function() {
+        sortByCreateDate();
+        sortActive(document.querySelector('#sort-create .sort__header'));
+      })();
+
+
     })();
+
+    // console.log(allClients);
 
     // Создаем и заполняем данными div.row для каждого клиента
     createRow(allClients);
@@ -267,7 +276,7 @@
   }
 
   // ------------------------------------
-  // Сортировка
+  // Сортировки
   // ------------------------------------
 
   // Сортировка контактов каждого клиента
@@ -275,10 +284,10 @@
     clientContacts.sort((a, b) => a.id > b.id)
   }
 
-  const sortId = document.getElementById('sort-id');
-  const sortName = document.getElementById('sort-name');
-  const sortCreate = document.getElementById('sort-create');
-  const sortUpdate = document.getElementById('sort-update');
+  const sortId = document.querySelector('#sort-id .sort__header');
+  const sortName = document.querySelector('#sort-name .sort__header');
+  const sortCreate = document.querySelector('#sort-create .sort__header');
+  const sortUpdate = document.querySelector('#sort-update .sort__header');
 
   sortId.addEventListener('click', sortById);
   let sortByIdInvert = 1;
@@ -292,18 +301,7 @@
   sortUpdate.addEventListener('click',  sortByUpdateDate);
   let sortByUpdateDateInvert = 1;
 
-  function sortByName() {
-    if (sortByNameInvert) {
-      allClients.sort((a, b) => a.fullname.toLowerCase() > b.fullname.toLowerCase() ? 1 : -1)
-      sortByNameInvert = 0;
-    } else {
-      allClients.sort((a, b) => a.fullname.toLowerCase() < b.fullname.toLowerCase() ? 1 : -1)
-      sortByNameInvert = 1;
-    }
-    createRow(allClients);
-  }
-
-  function sortById() {
+  function sortById(e) {
     if (sortByIdInvert) {
       allClients.sort((a, b) => +a.id > +b.id ? 1 : -1)
       sortByIdInvert = 0;
@@ -311,10 +309,23 @@
       allClients.sort((a, b) => +a.id < +b.id ? 1 : -1)
       sortByIdInvert = 1;
     }
+    sortActive(sortId);
     createRow(allClients);
   }
 
-  function sortByCreateDate() {
+  function sortByName(e) {
+    if (sortByNameInvert) {
+      allClients.sort((a, b) => a.fullname.toLowerCase() > b.fullname.toLowerCase() ? 1 : -1)
+      sortByNameInvert = 0;
+    } else {
+      allClients.sort((a, b) => a.fullname.toLowerCase() < b.fullname.toLowerCase() ? 1 : -1)
+      sortByNameInvert = 1;
+    }
+    sortActive(sortName);
+    createRow(allClients);
+  }
+
+  function sortByCreateDate(e) {
     if (sortByCreateDateInvert) {
       allClients.sort((a, b) => {
         let dateA = new Date(a.createdAt);
@@ -330,26 +341,54 @@
       });
       sortByCreateDateInvert = 1;
     }
-    createRow(allClients);
+    if (!e) {
+      createRow(allClients);
+
+    } else {
+      sortActive(sortCreate);
+      createRow(allClients);
+    }
   }
 
-  function sortByUpdateDate() {
+  function sortByUpdateDate(e) {
     if (sortByUpdateDateInvert) {
       allClients.sort((a, b) => {
-        let dateA = new Date(a.createdAt);
-        let dateB = new Date(b.createdAt);
+        let dateA = new Date(a.updatedAt);
+        let dateB = new Date(b.updatedAt);
         return dateA - dateB;
       });
       sortByUpdateDateInvert = 0;
     } else {
       allClients.sort((a, b) => {
-        let dateA = new Date(a.createdAt);
-        let dateB = new Date(b.createdAt);
+        let dateA = new Date(a.updatedAt);
+        let dateB = new Date(b.updatedAt);
         return dateB - dateA;
       });
       sortByUpdateDateInvert = 1;
     }
+    sortActive(sortUpdate);
     createRow(allClients);
+  }
+
+  let activeSort = null;
+
+  function sortActive(el) {
+    const list = Array.from(el.childNodes);
+    const svg = list.find((item) => item.nodeName.includes('svg'));
+
+    svg.classList.toggle('rotate');
+
+    if (activeSort === null) {
+      activeSort = el;
+      el.classList.add('sort-active');
+    }
+
+    if (el !== activeSort) {
+      activeSort.classList.remove('sort-active');
+      activeSort = el;
+      el.classList.add('sort-active');
+    }
+
   }
 
   // ------------------------------------
