@@ -83,6 +83,7 @@ h1 {
   font-size: 12px;
   line-height: 16px;
   color: #B0B0B0;
+  z-index: -1;
 }
 .sort__row .col:not(:last-child) {
   padding-right: 20px;
@@ -215,17 +216,17 @@ h1 {
 
 
 
-#modal-delete  .modal__dialog {
+#modal-delete .modal__dialog {
 
   padding: 25px 90px;
 }
-#modal-delete  .modal__dialog span {
+#modal-delete .modal__dialog span {
   margin-bottom: 15px;
   font-weight: 700;
   font-size: 18px;
   line-height: 25px;
 }
-#modal-delete  .modal__dialog p {
+#modal-delete .modal__dialog p {
   text-align: center;
   font-size: 14px;
   margin-bottom: 25px;

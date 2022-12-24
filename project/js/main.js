@@ -12,7 +12,7 @@
 
   async function show() {
     // Записываем в переменную массив клиентов с сервера
-    allClients = (await getClients()).slice(0);
+    allClients = (await serverGetClients()).slice(0);
 
     // Подготовительные изменения массива контактов
     (function() {
@@ -102,7 +102,7 @@
       }
 
       // Вешаем обработчики на все кнопки "Изменить" и "Удалить"
-      obj.clientUpdateBtn.addEventListener('click', updateClient);
+      obj.clientUpdateBtn.addEventListener('click', showModalUpdate);
       obj.clientDeleteBtn.addEventListener('click', showModalDelete);
 
       // Функция возвращает массив узлов span
@@ -392,72 +392,48 @@
   }
 
   // ------------------------------------
-  // Поведение модального окна "Добавить клиента"
+  // Поведение модального окна
   // ------------------------------------
 
   // Кнопка "Добавить клиента"
   const addClientBtn = document.querySelector('.newclient__btn');
   // вызывает модальное окно
-  addClientBtn.addEventListener('click', () => { showModal('Новый клиент') });
+  addClientBtn.addEventListener('click', showModalAdd);
 
   // Модальное окно "Добавить клиента"
-  // Нужно для функции showModal() и closeModalAdd()
-  const modalAdd = document.getElementById('modal-add');
+  const modal = document.getElementById('modal-add');
+
+  // Вешаем обработчики закрытия
+  modalCloseEvents(modal);
 
   // Все инпуты из .modal__top
   // Нужны для поведения лейблов и их очистки
-  const allInputsWrap = document.querySelectorAll('.modal__input-wrap');
+  const modalAllInputsWrap = document.querySelectorAll('.modal__input-wrap');
 
-  // Отображаем модальное окно "Новый клиент"
-  function showModal(title, client) {
-    clearModalAdd();
-    fadeIn(modalAdd, 200, 'flex');
-
-    const h2 = document.querySelector('.modal__top h2');
-
-    if (client !== undefined) {
-      h2.innerHTML = `${title}<span>ID: ${client.id}</span>`;
-      const inputs = getAllInputs();
-      inputs.nameInput.value = client.name;
-      inputs.surnameInput.value = client.surname;
-      inputs.lastnameInput.value = client.lastName
-
-      for(let i = 0; i < client.contacts.length; i++) {
-        const contact = createNewContact();
-        // Тут метод из библиотеки choises.js
-        contact.choisesObj.setChoiceByValue(client.contacts[i].type);
-        contact.input.value = client.contacts[i].value;
-      }
-
-    } else h2.innerHTML = title;
-
-    // Поведение label`ов
-    (function() {
-      for(let i = 0; i < allInputsWrap.length; i++) {
-        const label = allInputsWrap[i].firstElementChild;
-        const input = allInputsWrap[i].lastElementChild;
-
-        label.classList.remove('modal__label--active');
-
-        if (input.value) {
-          label.classList.add('modal__label--active');
-        }
-        input.onfocus = function() {
-          label.classList.add('modal__label--active');
-        }
-        input.onblur = function() {
-          if (!input.value) {
-            label.classList.remove('modal__label--active');
-          }
-        }
-      }
-    })();
-  }
-
-  // Кнопка "Добавить контакт"
-  const addContactBtn = document.querySelector('.modal__addNewContact-btn');
+  // Кнопка окна "Добавить контакт"
+  const modalAddContactBtn = document.querySelector('.modal__addNewContact-btn');
   // добавляет новый селект и инпут
-  addContactBtn.addEventListener('click', createNewContact)
+  modalAddContactBtn.addEventListener('click', createNewContact)
+
+
+
+
+
+  // Кнопка окна "Сохранить"
+  const modalSaveBtn = document.getElementById('modal-add__primary-btn');
+
+
+
+
+
+
+  // Возврящает все инпуты (массив объектов) из модального окна
+  function getAllInputs() {
+    const nameInput = document.getElementById('modal__name');
+    const surnameInput = document.getElementById('modal__surname');
+    const lastnameInput = document.getElementById('modal__lastname');
+    return { nameInput, surnameInput, lastnameInput };
+  }
 
   // Функция создает селект и инпут для нового контакта
   function createNewContact() {
@@ -515,29 +491,13 @@
     return { choisesObj, input };
   }
 
-  // Кнопка "Сохранить"
-  const saveBtnBtn = document.getElementById('modal-add__primary-btn');
-  // отправляет данные на сервер
-  saveBtnBtn.addEventListener('click', saveContact )
-
-  // Возврящает все инпуты (массив объектов) из модального окна
-  function getAllInputs() {
-    const nameInput = document.getElementById('modal__name');
-    const surnameInput = document.getElementById('modal__surname');
-    const lastnameInput = document.getElementById('modal__lastname');
-    return { nameInput, surnameInput, lastnameInput };
-  }
-
-  // Взять данные из инпутов и отправить на сервер
-  async function saveContact() {
-    const inputs = getAllInputs();
-
+  function createObj(inputsObj) {
     const newContact = document.querySelector('.modal__newContact');
 
     let data = {};
-    data.name = inputs.nameInput.value.trim();
-    data.surname = inputs.surnameInput.value.trim();
-    data.lastName = inputs.lastnameInput.value.trim();
+    data.name = inputsObj.nameInput.value.trim();
+    data.surname = inputsObj.surnameInput.value.trim();
+    data.lastName = inputsObj.lastnameInput.value.trim();
     data.contacts = [];
 
     if (newContact) {
@@ -555,53 +515,95 @@
         data.contacts.push(obj)
       }
     }
-
-    await postClient(data);
-
-    // Закрываем модальное окно
-    closeModalAdd();
-
-    // Берем массив данных с сервера
-    allClients = await getClients();
-
-    // Перерисовываем приложение
-    show();
-  };
-
-  // Если кликнуть вне диалогового окна,
-  // на крестик или кнопку "отмена", то окно закроется,
-  // инпуты очистятся и удалятся дополнительные селекты
-  (function() {
-    const closeBtn = document.querySelector('.modal__close-btn');
-    const cancelBtn = document.getElementById('modal-add__secondary-btn');
-    closeBtn.addEventListener('click', closeModalAdd);
-    cancelBtn.addEventListener('click', closeModalAdd);
-
-    modalAdd.addEventListener( 'click', (e) => {
-      const modalDialog = document.querySelector('.modal__dialog');
-      const contains = e.composedPath().includes(modalDialog);
-      if ( !contains ) {
-        fadeOut(modalAdd, 200);
-        closeModalAdd();
-      }
-    })
-  })();
-
-  // Закрытие модального окна из любого места родительской функции
-  function closeModalAdd() {
-    fadeOut(modalAdd, 200);
-    clearModalAdd();
+    return data;
   }
 
-  // Очистка модального окна
-  function clearModalAdd() {
-    // Удаление инпутов
+  // Отображаем модальное окно
+  function showModal(title, client) {
+    clearModalAdd();
+    fadeIn(modal, 200, 'flex');
+
+    const h2 = document.querySelector('.modal__top h2');
+
+    // Если client передан, значит это окно "Изменить клиента"
+    if (client !== undefined) {
+      h2.innerHTML = `${title}<span>ID: ${client.id}</span>`;
+      const inputs = getAllInputs();
+      inputs.nameInput.value = client.name;
+      inputs.surnameInput.value = client.surname;
+      inputs.lastnameInput.value = client.lastName
+
+      for(let i = 0; i < client.contacts.length; i++) {
+        const contact = createNewContact();
+        // Тут метод из библиотеки choises.js
+        contact.choisesObj.setChoiceByValue(client.contacts[i].type);
+        contact.input.value = client.contacts[i].value;
+      }
+
+      modalSaveBtn.addEventListener('click', updateClient);
+
+    } else {
+      h2.innerHTML = title;
+      // Отправляем данные на сервер
+      modalSaveBtn.addEventListener('click', newClient);
+    };
+
+    // Поведение label`ов
     (function() {
-      for(let i = 0; i < allInputsWrap.length; i++) {
-        const input = allInputsWrap[i].lastElementChild.value = '';
+      for(let i = 0; i < modalAllInputsWrap.length; i++) {
+        const label = modalAllInputsWrap[i].firstElementChild;
+        const input = modalAllInputsWrap[i].lastElementChild;
+
+        label.classList.remove('modal__label--active');
+
+        if (input.value) {
+          label.classList.add('modal__label--active');
+        }
+        input.onfocus = function() {
+          label.classList.add('modal__label--active');
+        }
+        input.onblur = function() {
+          if (!input.value) {
+            label.classList.remove('modal__label--active');
+          }
+        }
       }
     })();
-    // Удаление селектов
+  }
+
+  // ------------------------------------
+  // Поведение модального окна "Добавить клиента"
+  // ------------------------------------
+
+  function showModalAdd() {
+    showModal('Новый клиент');
+  }
+
+  // (Новый) Взять данные из инпутов и отправить на сервер
+  async function newClient() {
+    const inputsObj = getAllInputs();
+    const data = createObj(inputsObj);
+    await serverNewClient(data);
+    // Закрываем модальное окно
+    closeModalAdd();
+    // Берем массив данных с сервера
+    allClients = await serverGetClients();
+    // Перерисовываем приложение
+    show();
+    // Удаляем обработчик с кнопки
+    modalSaveBtn.removeEventListener('click', newClient);
+  };
+
+  // Очистка модального окна "Добавить клиента"
+  // удаление инпутов и селектов
+  function clearModalAdd() {
+    // Очистка инпутов
+    (function() {
+      for(let i = 0; i < modalAllInputsWrap.length; i++) {
+        const input = modalAllInputsWrap[i].lastElementChild.value = '';
+      }
+    })();
+    // Удаление селектов и инпутов контактов
     (function() {
       const parent = document.querySelector('.modal__newContact-content');
       while (parent.firstChild) {
@@ -614,12 +616,32 @@
   // Поведение модального окна "Изменить клиента"
   // ------------------------------------
 
-  async function updateClient(e) {
-    const id = e.target.getAttribute('data-id');
-    const client = await getClient(id);
+  // ID клиента, котрого нужно удалить
+  let clientIndexUpdate = null;
 
-    showModal('Изменить клиента',client);
+  // Показать модальное окно с нужным клиентом
+  async function showModalUpdate() {
+    clientIndexUpdate = this.getAttribute('data-id');
+    const client = await serverGetClient(clientIndexUpdate);
+    showModal('Изменить клиента', client);
   }
+
+  // (Изменить) Взять данные из инпутов и отправить на сервер
+  async function updateClient() {
+    const inputsObj = getAllInputs();
+    const data = createObj(inputsObj);
+
+    await serverUpdateClient(clientIndexUpdate, data);
+
+    // Закрываем модальное окно
+    closeModalAdd();
+    // Берем массив данных с сервера
+    allClients = await serverGetClients();
+    // Перерисовываем приложение
+    show();
+    // Удаляем обработчик с кнопки
+    modalSaveBtn.removeEventListener('click', updateClient);
+  };
 
   // ------------------------------------
   // Поведение модального окна "Удалить клиента"
@@ -627,6 +649,10 @@
 
   // Модальное модальное окно "Удалить клиента"
   const modalDelete = document.getElementById('modal-delete');
+
+  // Вешаем необходимые обработчики закрытия
+  modalCloseEvents(modalDelete);
+
   // Кнопка "Удалить", подтверждающая удаление
   const deleteBtn = document.getElementById('modal-delete__primary-btn');
   // вызывает удаление клиента с сервера
@@ -635,20 +661,54 @@
   // ID клиента, котрого нужно удалить
   let clientIndexDelete = null;
 
-  // Узнаем ID клиента и отображаем модальное окно
-  function showModalDelete(e) {
-    clientIndexDelete = e.target.getAttribute('data-id');
+  // Узнаем id клиента
+  // отображаем модальное окно
+  function showModalDelete() {
+    clientIndexDelete = this.getAttribute('data-id');
     fadeIn(modalDelete, 200, 'flex');
   }
 
-  // Удаляем клиента с сервера,
-  // обновляем локальные данные,
+  // Удаляем клиента с сервера, используя его id
+  // закрываем модальное окно
+  // обновляем локальные данные
   // перерисовываем приложение
   async function deleteClient() {
     serverDeleteClient(clientIndexDelete);
     fadeOut(modalDelete, 200, 'flex');
-    allClients = await getClients();
+    allClients = await serverGetClients();
     show();
+  }
+
+  // ------------------------------------
+  // Общие функции модальных окон
+  // ------------------------------------
+
+  // Если кликнуть вне диалоговых окон,
+  // на крестик или кнопку "отмена", то окно закроется,
+  // инпуты очистятся и удалятся дополнительные селекты
+  function modalCloseEvents(modal) {
+
+    // Кнопки "Х" и "Отмена" модального окна
+    const modalCloseBtn = document.querySelector(`#${modal.id} .modal__btn-close`);
+    const modalCancelBtn = document.querySelector(`#${modal.id} .modal__btn-secondary`);
+    // закрывают модальное окно "Добавить клиента"
+    modalCloseBtn.addEventListener('click', () => { closeModalAdd(modal) });
+    modalCancelBtn.addEventListener('click', () => { closeModalAdd(modal) });
+
+    // Клик вне модального она закрывает окно
+    modal.addEventListener( 'click', (e) => {
+      const modalDialog = document.querySelector(`#${modal.id} .modal__dialog`);
+      const contains = e.composedPath().includes(modalDialog);
+      if (!contains) {
+        closeModalAdd(modal);
+        if (modal.id === 'modal-add') clearModalAdd();
+      }
+    })
+  };
+
+  // Закрытие модальных окон
+  function closeModalAdd(el) {
+    fadeOut(el, 200);
   }
 
   // ------------------------------------
@@ -681,7 +741,7 @@
   // ------------------------------------
 
   // Создать клиента
-  async function postClient(data = {}) {
+  async function serverNewClient(data = {}) {
     const response = await fetch(`${URL}${URI}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -692,25 +752,36 @@
   };
 
   // Получить список клиентов
-  async function getClients() {
+  async function serverGetClients() {
     const response = await fetch(`${URL}${URI}`);
     const clients = await response.json();
     return clients;
   };
 
   // Получить клиента по id
-  async function getClient(id) {
+  async function serverGetClient(id) {
     const response = await fetch(`${URL}${URI}/${id}`);
     const clients = await response.json();
     return clients;
   };
 
-  // Удалить клиента
+  // Удалить клиента по id
   async function serverDeleteClient(id) {
     const response = await fetch(`${URL}${URI}/${id}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(id)
+    });
+    const clients = await response.json();
+    return clients;
+  };
+
+  // Изменить клиента по id
+  async function serverUpdateClient(id, data = {}) {
+    const response = await fetch(`${URL}${URI}/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
     });
     const clients = await response.json();
     return clients;
