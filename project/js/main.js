@@ -301,7 +301,7 @@
   sortUpdate.addEventListener('click',  sortByUpdateDate);
   let sortByUpdateDateInvert = 1;
 
-  function sortById(e) {
+  function sortById() {
     if (sortByIdInvert) {
       allClients.sort((a, b) => +a.id > +b.id ? 1 : -1)
       sortByIdInvert = 0;
@@ -313,7 +313,7 @@
     createRow(allClients);
   }
 
-  function sortByName(e) {
+  function sortByName() {
     if (sortByNameInvert) {
       allClients.sort((a, b) => a.fullname.toLowerCase() > b.fullname.toLowerCase() ? 1 : -1)
       sortByNameInvert = 0;
@@ -506,13 +506,20 @@
 
       for(let i = 0; i < allSelects.length; i++) {
         const selectValue = allSelects[i].value;
-        const inputValue = allContactInputs[i].value;
-        let obj = {};
+        let inputValue = null;
+        if (allContactInputs[i].value === '') {
+          // если инпут пустой, то ничего не делаем
+          // не пушим на этой итерации в массив data
+        }
+        else {
+          inputValue = allContactInputs[i].value;
+          let obj = {};
 
-        obj.type = selectValue;
-        obj.value = inputValue;
+          obj.type = selectValue;
+          obj.value = inputValue;
 
-        data.contacts.push(obj)
+          data.contacts.push(obj)
+        }
       }
     }
     return data;
@@ -585,7 +592,7 @@
     const data = createObj(inputsObj);
     await serverNewClient(data);
     // Закрываем модальное окно
-    closeModalAdd();
+    closeModalAdd(modal);
     // Берем массив данных с сервера
     allClients = await serverGetClients();
     // Перерисовываем приложение
@@ -634,7 +641,7 @@
     await serverUpdateClient(clientIndexUpdate, data);
 
     // Закрываем модальное окно
-    closeModalAdd();
+    closeModalAdd(modal);
     // Берем массив данных с сервера
     allClients = await serverGetClients();
     // Перерисовываем приложение
@@ -727,7 +734,6 @@
 
   // Изчезновение
   function fadeOut(el, timeout) {
-    // console.log(el);
     el.style.opacity = 1;
     el.style.transition = `opacity ${timeout}ms`;
     el.style.opacity = 0;
