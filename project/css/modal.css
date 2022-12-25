@@ -283,9 +283,13 @@
   font-size: 14px;
 }
 
-.errors {
+.modal__errors-wrap {
   display: none;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 25px;
+}
+.error {
   color: red;
   font-size: 12px;
-  padding-bottom: 25px;
 }

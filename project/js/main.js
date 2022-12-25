@@ -12,14 +12,15 @@
     }
 
     // Создать клиента
-    async newClient(data = {}) {
+    async newClient(obj = {}) {
       const response = await fetch(`${this.URL}${this.URI}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+        body: JSON.stringify(obj)
       });
-      const client = await response.json();
-      return client;
+      const status = response.status;
+      const data = await response.json();
+      return {status, data};
     };
 
     // Получить список клиентов
@@ -43,8 +44,9 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(id)
       });
-      const clients = await response.json();
-      return clients;
+      const status = response.status;
+      const data = await response.json();
+      return {status, data};
     };
 
     // Изменить клиента по id
@@ -448,30 +450,22 @@
   // Модальное окно "Добавить клиента"
   const modal = document.getElementById('modal');
 
-
-
   // Все инпуты из .modal__top
   // Нужны для поведения лейблов и их очистки
   const modalAllInputsWrap = document.querySelectorAll('.modal__input-wrap');
 
-  // Кнопка окна "Добавить контакт"
+  // Кнопка модального окна "Добавить контакт"
   const modalAddContactBtn = document.querySelector('.modal__addNewContact-btn');
   // добавляет новый селект и инпут
   modalAddContactBtn.addEventListener('click', createNewContact)
 
-
-
-
-  // Кнопка окна "Сохранить"
+  // Кнопка модального окна "Сохранить"
   const modalSaveBtn = document.getElementById('modal-add__primary-btn');
 
-  // Вешаем обработчики закрытия
+  // Вешаем обработчики закрытия на модальное окно
+  // По нажатию на "х", кнопку "Отмена" или фон модального окна
+  // модальное окно закроется
   modalCloseEvents(modal);
-
-
-
-
-
 
   // Возврящает все инпуты (массив объектов) из модального окна
   function getAllInputs() {
@@ -480,8 +474,6 @@
     const lastnameInput = document.getElementById('modal__lastname');
     return { nameInput, surnameInput, lastnameInput };
   }
-
-  let contactsCount= 0;
 
   // Функция создает селект и инпут для нового контакта
   function createNewContact() {
@@ -546,11 +538,10 @@
     // Передаем select в плагин choices.js
     const choisesObj = choises(select);
 
-    contactsCount++;
-
     return { choisesObj, input };
   }
 
+  // Формирование объекта из данных формы для отправки на сервер
   function createObj(inputsObj) {
     const newContact = document.querySelector('.modal__newContact');
 
@@ -587,7 +578,7 @@
 
   // Отображаем модальное окно
   function showModal(title, client) {
-    clearModalAdd();
+    clearModalInputs();
     fadeIn(modal, 200, 'flex');
 
     const h2 = document.querySelector('.modal__top h2');
@@ -606,9 +597,7 @@
         contact.choisesObj.setChoiceByValue(client.contacts[i].type);
         contact.input.value = client.contacts[i].value;
       }
-
       modalSaveBtn.addEventListener('click', updateClient);
-
     } else {
       h2.innerHTML = title;
       // Отправляем данные на сервер
@@ -646,33 +635,32 @@
     showModal('Новый клиент');
   }
 
-  // (Новый) Взять данные из инпутов и отправить на сервер
+  // (Новый клиент) Взять данные из инпутов и отправить на сервер
   async function newClient() {
+    // Берем данные из инпутов
     const inputsObj = getAllInputs();
+    // Формируем объект с данными клиента
     const data = createObj(inputsObj);
-    await server.newClient(data);
-    // Закрываем модальное окно
-    closeModalAdd(modal);
-    // Перерисовываем приложение
-    show();
+    // Отправляем его на сервер
+    const response = await server.newClient(data);
+    // Обрабатываем ответ сервера
+    modalErrorsCheck(response);
   };
 
   // Очистка модального окна "Добавить клиента"
   // удаление инпутов и селектов
-  function clearModalAdd() {
+  function clearModalInputs() {
     // Очистка инпутов
-    (function() {
-      for(let i = 0; i < modalAllInputsWrap.length; i++) {
-        const input = modalAllInputsWrap[i].lastElementChild.value = '';
-      }
-    })();
+    for(let i = 0; i < modalAllInputsWrap.length; i++) {
+      const input = modalAllInputsWrap[i].lastElementChild.value = '';
+    }
+
     // Удаление селектов и инпутов контактов
-    (function() {
-      const parent = document.querySelector('.modal__newContact-content');
-      while (parent.firstChild) {
-        parent.removeChild(parent.firstChild); // Повторяется
-      }
-    })();
+    const parent = document.querySelector('.modal__newContact-content');
+    while (parent.firstChild) {
+      parent.removeChild(parent.firstChild); // Повторяется
+    }
+
   };
 
   // ------------------------------------
@@ -689,22 +677,14 @@
     showModal('Изменить клиента', client);
   }
 
-  // (Изменить) Взять данные из инпутов и отправить на сервер
+  // (Изменить клиента) Взять данные из инпутов и отправить на сервер
   async function updateClient() {
     const inputsObj = getAllInputs();
     const obj = createObj(inputsObj);
 
     const response = await server.updateClient(clientIndexUpdate, obj);
 
-
-    if (response.status === 200 || response.status === 201) {
-      // Закрываем модальное окно
-      closeModalAdd(modal);
-      // Перерисовываем приложение
-      show();
-    } else {
-      showError(response.data.errors[0].message);
-    }
+    modalErrorsCheck(response);
   };
 
   // ------------------------------------
@@ -733,18 +713,30 @@
   }
 
   // Удаляем клиента с сервера, используя его id
-  // закрываем модальное окно
-  // обновляем локальные данные
-  // перерисовываем приложение
   async function deleteClient() {
-    await server.deleteClient(clientIndexDelete);
-    fadeOut(modalDelete, 200, 'flex');
-    show();
+    const response = await server.deleteClient(clientIndexDelete);
+    modalErrorsCheck(response);
   }
 
   // ------------------------------------
   // Общие функции модальных окон
   // ------------------------------------
+
+  // Если успешно, то
+  // закрываем модальное окно и перерисовываем приложение
+  // Если есть ошибки - показываем их
+  function modalErrorsCheck(response) {
+    if (response.status === 200 || response.status === 201) {
+      // Закрываем модальное окно
+      closeModal(modal);
+      // Перерисовываем приложение
+      show();
+    } else if (response.data.hasOwnProperty('errors')) {
+      showError(response.data.errors);
+    } else {
+      showError('Что-то пошло не так...');
+    }
+  }
 
   // Удалить дочерние узлы
   function deleteChildNode(node) {
@@ -753,47 +745,54 @@
     }
   }
 
-  const errorsSpan = document.querySelector('.errors');
+  const errorsWrap = document.querySelector('.modal__errors-wrap');
 
   // показать ошибки сервера
-  function showError(message) {
-    errorsSpan.innerHTML = message;
-    fadeIn(errorsSpan, 0, 'flex');
+  function showError(messages) {
+    deleteChildNode(errorsWrap);
+
+    for (let i = 0; i < messages.length; i++) {
+      let errorSpan = document.createElement('span');
+      errorSpan.classList.add('error');
+      errorSpan.innerHTML = messages[i].message;
+      errorsWrap.append(errorSpan);
+      fadeIn(errorsWrap, 0, 'flex');
+    }
   }
 
   // Если кликнуть вне диалоговых окон,
   // на крестик или кнопку "отмена", то окно закроется,
   // инпуты очистятся и удалятся дополнительные селекты
   function modalCloseEvents(modal) {
-
     // Кнопки "Х" и "Отмена" модального окна
     const modalCloseBtn = document.querySelector(`#${modal.id} .modal__btn-close`);
     const modalCancelBtn = document.querySelector(`#${modal.id} .modal__btn-secondary`);
     // закрывают модальное окно "Добавить клиента"
-    modalCloseBtn.addEventListener('click', () => { closeModalAdd(modal) });
-    modalCancelBtn.addEventListener('click', () => { closeModalAdd(modal) });
+    modalCloseBtn.addEventListener('click', () => { closeModal(modal) });
+    modalCancelBtn.addEventListener('click', () => { closeModal(modal) });
 
     // Клик вне модального она закрывает окно
     modal.addEventListener( 'click', (e) => {
       const modalDialog = document.querySelector(`#${modal.id} .modal__dialog`);
       const contains = e.composedPath().includes(modalDialog);
       if (!contains) {
-        closeModalAdd(modal);
-        if (modal.id === 'modal-add') clearModalAdd();
+        closeModal(modal);
+        if (modal.id === 'modal-add') clearModalInputs();
       }
     })
   };
 
   // Закрытие модальных окон
-  function closeModalAdd(el) {
+  function closeModal(el) {
     fadeOut(el, 200);
+    deleteChildNode(errorsWrap);
 
-    setTimeout(() => {
-      modalSaveBtn.removeEventListener('click', updateClient);
-      modalSaveBtn.removeEventListener('click', newClient);
-      errorsSpan.innerHTML = '';
-      fadeOut(errorsSpan, 0);
-    }, 300)
+    if (el.id === 'modal') {
+      setTimeout(() => {
+        modalSaveBtn.removeEventListener('click', updateClient);
+        modalSaveBtn.removeEventListener('click', newClient);
+      }, 300)
+    }
   }
 
   // ------------------------------------
@@ -819,8 +818,6 @@
       el.style.display = 'none';
     }, timeout);
   };
-
-
 
   // ------------------------------------
   // Сторонние плагины
