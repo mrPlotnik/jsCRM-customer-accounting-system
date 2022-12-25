@@ -242,7 +242,7 @@
   width: 100%;
   padding: 25px 30px;
 }
-.modal__btn-primary {
+.modal__primary-btn {
   /* width: fit-content; */
   margin-bottom: 15px;
   font-weight: 600;
@@ -252,16 +252,16 @@
   background-color: var(--color-accent);
   transition:  background-color var(--transition-duration) ease-in-out;
 }
-.modal__btn-primary:hover {
+.modal__primary-btn:hover {
   background-color: var(--color-accent-light);
 }
-.modal__btn-secondary {
+.modal__secondary-btn {
   text-decoration: underline;
   font-size: 12px;
   line-height: 16px;
   transition: color var(--transition-duration) ease-in-out;
 }
-.modal__btn-secondary:hover {
+.modal__secondary-btn:hover {
   color: var(--color-accent);
 }
 
@@ -293,3 +293,30 @@
   color: red;
   font-size: 12px;
 }
+
+
+.choices__list--single {
+  padding-left: 1px;
+}
+.choices__list--single .choices__item {
+  display: flex;
+  align-items: center;
+}
+.choices__list[aria-expanded] .choices__item  {
+  display: flex;
+  align-items: center;
+}
+.choices svg {
+  margin-right: 5px;
+}
+.choices .phoneIcon,
+.choices .emailIcon path,
+.choices .instaIcon path:last-child,
+.choices .vkIcon path,
+.choices .tgIcon path,
+.choices .otherIcon path
+{
+  fill: var(--color-gray-40);
+}
+
+
