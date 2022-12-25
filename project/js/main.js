@@ -1,81 +1,142 @@
 (async function() {
 
-  // Куда будут монтироваться контакты
-  const CLIENTS_WRAP = document.querySelector('.clients-wrap');
-  // Обращение к серверу
-  const URL = 'http://localhost:3000';
-  const URI = '/api/clients';
+  // ------------------------------------
+  // Методы сервера
+  // ------------------------------------
 
+  class Server {
+
+    constructor() {
+      this.URL = 'http://localhost:3000';
+      this.URI = '/api/clients';
+    }
+
+    // Создать клиента
+    async newClient(data = {}) {
+      const response = await fetch(`${this.URL}${this.URI}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const client = await response.json();
+      return client;
+    };
+
+    // Получить список клиентов
+    async getClients() {
+      const response = await fetch(`${this.URL}${this.URI}`);
+      const clients = await response.json();
+      return clients;
+    };
+
+    // Получить клиента по id
+    async getClient(id) {
+      const response = await fetch(`${this.URL}${this.URI}/${id}`);
+      const clients = await response.json();
+      return clients;
+    };
+
+    // Удалить клиента по id
+    async deleteClient(id) {
+      const response = await fetch(`${this.URL}${this.URI}/${id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(id)
+      });
+      const clients = await response.json();
+      return clients;
+    };
+
+    // Изменить клиента по id
+    async updateClient(id, obj = {}) {
+      const response = await fetch(`${this.URL}${this.URI}/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(obj)
+      });
+      const status = response.status;
+      const data = await response.json();
+      return {status, data};
+    };
+
+  }
+
+  // ------------------------------------
+  // Запуск CRM
+  // ------------------------------------
+  const deleteIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_216_224)"><path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#F06A4D"/></g><defs><clipPath id="clip0_216_224"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>'
+
+
+  // Создаем объект с методами сервера
+  let server = new Server();
+
+  // Сюда будут монтироваться div.row с клиентами
+  const CLIENTS_WRAP = document.querySelector('.clients-wrap');
+
+  // Массив клиентов
   let allClients = [];
 
   show();
 
   async function show() {
-    // Записываем в переменную массив клиентов с сервера
-    allClients = (await serverGetClients()).slice(0);
+    // Копируем в переменную массив клиентов полученный с сервера
+    allClients = (await server.getClients()).slice(0);
 
+    // --------------------------------------------
     // Подготовительные изменения массива контактов
-    (function() {
+    // --------------------------------------------
 
-      // Добавляем ключ fullname в объекты
-      for (let i = 0; i < allClients.length; i++) {
-        allClients[i].fullname = getFullName(allClients[i]);
-      };
+    // Добавляем ключ fullname в объекты
+    allClients.forEach((el) => el.fullname = getFullName(el));
 
-      // Добавляем id для контактов (для сортировки)
-      for (let i = 0; i < allClients.length; i++) {
-        const contacts = allClients[i].contacts;
-        for (let z = 0; z < contacts.length; z++) {
-          let contact = contacts[z];
-          if (contact.type === 'phone') {
-            contact.id = 1;
-          } else if (contact.type === 'email') {
-            contact.id = 2;
-          } else if (contact.type === 'tg') {
-            contact.id = 3;
-          } else if (contact.type === 'vk') {
-            contact.id = 4;
-          } else if (contact.type === 'insta') {
-            contact.id = 5;
-          }
-        }
-      }
+    // Добавляем ключ id для каждого контакта
+    // для более простой сортировки
+    allClients.forEach((el) => {
+      const contacts = el.contacts;
+      contacts.forEach((e) => {
+        if (e.type === 'phone') e.id = 1;
+        else if (e.type === 'email') e.id = 2;
+        else if (e.type === 'tg') e.id = 3;
+        else if (e.type === 'vk') e.id = 4;
+        else if (e.type === 'insta') e.id = 5;
+      })
+    });
 
-      // Предсортировка контактов у каждого клиента
-      for (let i = 0; i < allClients.length; i++) {
-        newArr = sortContacts(allClients[i].contacts);
-      }
+    // Предсортировка контактов у каждого клиента
+    allClients.forEach((el) => sortContacts(el.contacts));
 
-      // Предсортировка всего массива по дате создания
-      (function() {
-        sortByCreateDate();
-        sortActive(document.querySelector('#sort-create .sort__header'));
-      })();
+    // Предсортировка всего массива по дате создания
+    // перед отрисовкой
+    sortByCreateDate();
 
-
-    })();
-
-    // console.log(allClients);
+    console.log(allClients);
 
     // Создаем и заполняем данными div.row для каждого клиента
     createRow(allClients);
+
+    // Конкатинируем имена
+    function getFullName(data) {
+      const name = data.name;
+      const surname = data.surname;
+      const lastname = data.lastName;
+      return `${surname} ${name} ${lastname}`;
+    }
   }
 
   // Создаем и заполняем елемент row для каждого клиента
+  // Оставляем в глоб-м scope для перерисовывания при сортировке
   function createRow(allClients) {
     // Удаляем дочерние DOM узлы
-    while (CLIENTS_WRAP.firstChild) {
-      CLIENTS_WRAP.removeChild(CLIENTS_WRAP.firstChild);
-    }
+    deleteChildNode(CLIENTS_WRAP);
 
-    for (let i = 0; i < allClients.length; i++) {
+    allClients.forEach((el) => {
       // Берем "пустой" row (объект из узлов DOM)
-      const emptyRow = createEmptyRow(allClients[i].id);
+      const emptyRow = createEmptyRow();
       // заполняем его
-      const fullRow = insertDataInRow(emptyRow, allClients[i]);
+      const fullRow = insertDataInRow(emptyRow, el);
       // монтируем его
       CLIENTS_WRAP.append(fullRow);
-    }
+    })
 
     // Функция возвращает заполненный div.row информацией с сервера
     function insertDataInRow(obj, clientData) {
@@ -102,8 +163,8 @@
       }
 
       // Вешаем обработчики на все кнопки "Изменить" и "Удалить"
-      obj.clientUpdateBtn.addEventListener('click', showModalUpdate);
-      obj.clientDeleteBtn.addEventListener('click', showModalDelete);
+      obj.clientUpdateBtn.addEventListener('click', () => { showModalUpdate(clientData.id) });
+      obj.clientDeleteBtn.addEventListener('click', () => { showModalDelete(clientData.id) });
 
       // Функция возвращает массив узлов span
       // с иконками контактов
@@ -115,7 +176,6 @@
 
           const fullSpan = insertData(emptySpan, contacts[i]);
           allContacts.push(fullSpan);
-          // console.log(allContacts);
         }
 
         function createEmptySpan() {
@@ -170,14 +230,28 @@
         return allContacts;
       }
 
+      // Преобразовываем даты
+      function dataFormat(createDate) {
+        var options = {
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          year: 'numeric',
+          month: 'numeric',
+        };
+        const newDate = new Date(createDate).toLocaleString("ru", options);
+        const date = newDate.split(',')[0];
+        const time = newDate.split(' ')[1];
+        return { date, time };
+      }
+
       // Возвращаем заполненный obj (<row>)
       return obj.row;
     }
 
     // Функция возвращает объект из пустых узлов (div.row и дочерние)
-    function createEmptyRow(id) {
+    function createEmptyRow() {
       const editIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_216_219)"> <path d="M2 11.5002V14.0002H4.5L11.8733 6.62687L9.37333 4.12687L2 11.5002ZM13.8067 4.69354C14.0667 4.43354 14.0667 4.01354 13.8067 3.75354L12.2467 2.19354C11.9867 1.93354 11.5667 1.93354 11.3067 2.19354L10.0867 3.41354L12.5867 5.91354L13.8067 4.69354Z" fill="#9873FF"/></g><defs><clipPath id="clip0_216_219"> <rect width="16" height="16" fill="white"/></clipPath></defs></svg>'
-      const deleteIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_216_224)"><path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#F06A4D"/></g><defs><clipPath id="clip0_216_224"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>'
 
       let row = document.createElement('div');
       row.classList.add('row', 'client-row');
@@ -214,12 +288,10 @@
       clientActions.classList.add('col', 'client__actions');
       let clientUpdateBtn = document.createElement('button');
       clientUpdateBtn.classList.add('btn-reset', 'client__update-btn');
-      clientUpdateBtn.setAttribute('data-id', id);
       clientUpdateBtn.innerHTML = editIcon + 'Изменить';
       // Кнопка "Удалить"
       let clientDeleteBtn = document.createElement('button');
       clientDeleteBtn.classList.add('btn-reset', 'client__delete-btn');
-      clientDeleteBtn.setAttribute('data-id', id);
       clientDeleteBtn.innerHTML = deleteIcon + 'Удалить';
 
       clientActions.append(clientUpdateBtn, clientDeleteBtn);
@@ -249,31 +321,7 @@
         clientDeleteBtn
       }
     }
-
   };
-
-  // Конкатинируем имена
-  function getFullName(data) {
-    const name = data.name;
-    const surname = data.surname;
-    const lastname = data.lastName;
-    return `${surname} ${name} ${lastname}`;
-  }
-
-  // Преобразовываем даты
-  function dataFormat(createDate) {
-    var options = {
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
-      year: 'numeric',
-      month: 'numeric',
-    };
-    const newDate = new Date(createDate).toLocaleString("ru", options);
-    const date = newDate.split(',')[0];
-    const time = newDate.split(' ')[1];
-    return { date, time };
-  }
 
   // ------------------------------------
   // Сортировки
@@ -290,16 +338,16 @@
   const sortUpdate = document.querySelector('#sort-update .sort__header');
 
   sortId.addEventListener('click', sortById);
-  let sortByIdInvert = 1;
+  let sortByIdInvert = 0;
 
   sortName.addEventListener('click', sortByName);
-  let sortByNameInvert = 1;
+  let sortByNameInvert = 0;
 
   sortCreate.addEventListener('click', sortByCreateDate);
-  let sortByCreateDateInvert = 1;
+  let sortByCreateDateInvert = 0;
 
   sortUpdate.addEventListener('click',  sortByUpdateDate);
-  let sortByUpdateDateInvert = 1;
+  let sortByUpdateDateInvert = 0;
 
   function sortById() {
     if (sortByIdInvert) {
@@ -325,7 +373,7 @@
     createRow(allClients);
   }
 
-  function sortByCreateDate(e) {
+  function sortByCreateDate() {
     if (sortByCreateDateInvert) {
       allClients.sort((a, b) => {
         let dateA = new Date(a.createdAt);
@@ -341,16 +389,11 @@
       });
       sortByCreateDateInvert = 1;
     }
-    if (!e) {
-      createRow(allClients);
-
-    } else {
-      sortActive(sortCreate);
-      createRow(allClients);
-    }
+    sortActive(sortCreate);
+    createRow(allClients);
   }
 
-  function sortByUpdateDate(e) {
+  function sortByUpdateDate() {
     if (sortByUpdateDateInvert) {
       allClients.sort((a, b) => {
         let dateA = new Date(a.updatedAt);
@@ -373,22 +416,24 @@
   let activeSort = null;
 
   function sortActive(el) {
+    // Ищем svg в переданном элементе
     const list = Array.from(el.childNodes);
     const svg = list.find((item) => item.nodeName.includes('svg'));
 
     svg.classList.toggle('rotate');
 
+    // Первая сортировка
     if (activeSort === null) {
       activeSort = el;
       el.classList.add('sort-active');
     }
 
+    // При смене сортировки
     if (el !== activeSort) {
       activeSort.classList.remove('sort-active');
       activeSort = el;
       el.classList.add('sort-active');
     }
-
   }
 
   // ------------------------------------
@@ -401,10 +446,9 @@
   addClientBtn.addEventListener('click', showModalAdd);
 
   // Модальное окно "Добавить клиента"
-  const modal = document.getElementById('modal-add');
+  const modal = document.getElementById('modal');
 
-  // Вешаем обработчики закрытия
-  modalCloseEvents(modal);
+
 
   // Все инпуты из .modal__top
   // Нужны для поведения лейблов и их очистки
@@ -418,9 +462,11 @@
 
 
 
-
   // Кнопка окна "Сохранить"
   const modalSaveBtn = document.getElementById('modal-add__primary-btn');
+
+  // Вешаем обработчики закрытия
+  modalCloseEvents(modal);
 
 
 
@@ -434,6 +480,8 @@
     const lastnameInput = document.getElementById('modal__lastname');
     return { nameInput, surnameInput, lastnameInput };
   }
+
+  let contactsCount= 0;
 
   // Функция создает селект и инпут для нового контакта
   function createNewContact() {
@@ -479,14 +527,26 @@
     input.classList.add('modal__input');
     input.setAttribute('type', 'text');
 
+    // Делаем кнопку
+    const btn1 = document.createElement('button');
+    btn1.classList.add('btn-reset', 'modal__deleteContact-btn');
+    btn1.innerHTML = deleteIcon;
+    // вешаем на нее обработчик удаления
+    btn1.addEventListener('click', function() {
+      const parent = newContactDiv.parentNode;
+      parent.removeChild(newContactDiv);
+    });
+
     // Монтируем селект и инпут в контейнер
-    newContactDiv.append(select, input);
+    newContactDiv.append(select, input, btn1);
 
     // Монтируем все в DOM
     newContact.append(newContactDiv);
 
     // Передаем select в плагин choices.js
     const choisesObj = choises(select);
+
+    contactsCount++;
 
     return { choisesObj, input };
   }
@@ -590,15 +650,11 @@
   async function newClient() {
     const inputsObj = getAllInputs();
     const data = createObj(inputsObj);
-    await serverNewClient(data);
+    await server.newClient(data);
     // Закрываем модальное окно
     closeModalAdd(modal);
-    // Берем массив данных с сервера
-    allClients = await serverGetClients();
     // Перерисовываем приложение
     show();
-    // Удаляем обработчик с кнопки
-    modalSaveBtn.removeEventListener('click', newClient);
   };
 
   // Очистка модального окна "Добавить клиента"
@@ -614,7 +670,7 @@
     (function() {
       const parent = document.querySelector('.modal__newContact-content');
       while (parent.firstChild) {
-        parent.removeChild(parent.firstChild);
+        parent.removeChild(parent.firstChild); // Повторяется
       }
     })();
   };
@@ -627,27 +683,28 @@
   let clientIndexUpdate = null;
 
   // Показать модальное окно с нужным клиентом
-  async function showModalUpdate() {
-    clientIndexUpdate = this.getAttribute('data-id');
-    const client = await serverGetClient(clientIndexUpdate);
+  async function showModalUpdate(id) {
+    clientIndexUpdate = id;
+    const client = await server.getClient(clientIndexUpdate);
     showModal('Изменить клиента', client);
   }
 
   // (Изменить) Взять данные из инпутов и отправить на сервер
   async function updateClient() {
     const inputsObj = getAllInputs();
-    const data = createObj(inputsObj);
+    const obj = createObj(inputsObj);
 
-    await serverUpdateClient(clientIndexUpdate, data);
+    const response = await server.updateClient(clientIndexUpdate, obj);
 
-    // Закрываем модальное окно
-    closeModalAdd(modal);
-    // Берем массив данных с сервера
-    allClients = await serverGetClients();
-    // Перерисовываем приложение
-    show();
-    // Удаляем обработчик с кнопки
-    modalSaveBtn.removeEventListener('click', updateClient);
+
+    if (response.status === 200 || response.status === 201) {
+      // Закрываем модальное окно
+      closeModalAdd(modal);
+      // Перерисовываем приложение
+      show();
+    } else {
+      showError(response.data.errors[0].message);
+    }
   };
 
   // ------------------------------------
@@ -670,8 +727,8 @@
 
   // Узнаем id клиента
   // отображаем модальное окно
-  function showModalDelete() {
-    clientIndexDelete = this.getAttribute('data-id');
+  function showModalDelete(id) {
+    clientIndexDelete = id;
     fadeIn(modalDelete, 200, 'flex');
   }
 
@@ -680,15 +737,29 @@
   // обновляем локальные данные
   // перерисовываем приложение
   async function deleteClient() {
-    serverDeleteClient(clientIndexDelete);
+    await server.deleteClient(clientIndexDelete);
     fadeOut(modalDelete, 200, 'flex');
-    allClients = await serverGetClients();
     show();
   }
 
   // ------------------------------------
   // Общие функции модальных окон
   // ------------------------------------
+
+  // Удалить дочерние узлы
+  function deleteChildNode(node) {
+    while (node.firstChild) {
+      node.removeChild(node.firstChild);
+    }
+  }
+
+  const errorsSpan = document.querySelector('.errors');
+
+  // показать ошибки сервера
+  function showError(message) {
+    errorsSpan.innerHTML = message;
+    fadeIn(errorsSpan, 0, 'flex');
+  }
 
   // Если кликнуть вне диалоговых окон,
   // на крестик или кнопку "отмена", то окно закроется,
@@ -716,6 +787,13 @@
   // Закрытие модальных окон
   function closeModalAdd(el) {
     fadeOut(el, 200);
+
+    setTimeout(() => {
+      modalSaveBtn.removeEventListener('click', updateClient);
+      modalSaveBtn.removeEventListener('click', newClient);
+      errorsSpan.innerHTML = '';
+      fadeOut(errorsSpan, 0);
+    }, 300)
   }
 
   // ------------------------------------
@@ -742,56 +820,7 @@
     }, timeout);
   };
 
-  // ------------------------------------
-  // Методы сервера
-  // ------------------------------------
 
-  // Создать клиента
-  async function serverNewClient(data = {}) {
-    const response = await fetch(`${URL}${URI}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const client = await response.json();
-    return client;
-  };
-
-  // Получить список клиентов
-  async function serverGetClients() {
-    const response = await fetch(`${URL}${URI}`);
-    const clients = await response.json();
-    return clients;
-  };
-
-  // Получить клиента по id
-  async function serverGetClient(id) {
-    const response = await fetch(`${URL}${URI}/${id}`);
-    const clients = await response.json();
-    return clients;
-  };
-
-  // Удалить клиента по id
-  async function serverDeleteClient(id) {
-    const response = await fetch(`${URL}${URI}/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(id)
-    });
-    const clients = await response.json();
-    return clients;
-  };
-
-  // Изменить клиента по id
-  async function serverUpdateClient(id, data = {}) {
-    const response = await fetch(`${URL}${URI}/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const clients = await response.json();
-    return clients;
-  };
 
   // ------------------------------------
   // Сторонние плагины

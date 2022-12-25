@@ -191,7 +191,6 @@
   width: 100%;
   padding-left: 15px;
   border: none;
-  border-right: 1px solid var(--color-gray-20);
   font-weight: 600;
   font-size: 14px;
   transition: background-color var(--transition-duration) ease-in-out;
@@ -203,6 +202,22 @@
 .modal__input:focus-visible {
   outline: none;
   background-color: #f3effd
+}
+.modal__deleteContact-btn {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-right: 1px solid var(--color-gray-20);
+  border-left: 1px solid var(--color-gray-20);
+}
+.modal__deleteContact-btn svg g path {
+  fill: var(--color-gray-19);
+  transition: fill var(--transition-duration) ease-in-out;
+}
+.modal__deleteContact-btn:hover svg g path {
+  fill: red;
 }
 .modal__addNewContact-btn {
   display: flex;
@@ -253,6 +268,7 @@
 /* .modal-delete */
 
 #modal-delete .modal__dialog {
+  min-height: unset;
   padding: 25px 90px;
 }
 #modal-delete .modal__dialog span {
@@ -262,7 +278,14 @@
   line-height: 25px;
 }
 #modal-delete .modal__dialog p {
+  margin-bottom: 25px;
   text-align: center;
   font-size: 14px;
-  margin-bottom: 25px;
+}
+
+.errors {
+  display: none;
+  color: red;
+  font-size: 12px;
+  padding-bottom: 25px;
 }
