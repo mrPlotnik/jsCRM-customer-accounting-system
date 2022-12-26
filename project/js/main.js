@@ -232,6 +232,14 @@
             obj.link.innerHTML = otherIcon;
             obj.link.setAttribute('href', `https://twitter.com/${arr.value}`);
             tooltip(obj.link, `Твиттер: <span class="tooltip">${arr.value}</span>` );
+          } else if (arr.type === 'otherEmail') {
+            obj.link.innerHTML = emailIcon;
+            obj.link.setAttribute('href', `mailto:${arr.value}`);
+            tooltip(obj.link, `Доп. почта: <span class="tooltip">${arr.value}</span>` );
+          }else if (arr.type === 'otherTel') {
+            obj.link.innerHTML = phoneIcon;
+            obj.link.setAttribute('href', `tel:${arr.value}`);
+            tooltip(obj.link, `Доп. телефон: <span class="tooltip">${arr.value}</span>` );
           }
 
           function tooltip(el, content) {
@@ -466,6 +474,16 @@
   // Нужны для поведения лейблов и их очистки
   const modalAllInputsWrap = document.querySelectorAll('.modal__input-wrap');
 
+  let newContactCount = 0;
+
+  // Если контактов 10, то скрываем кнопку
+  function checkContactcount(bool) {
+    if (bool) newContactCount++;
+    else newContactCount--;
+    if (newContactCount === 10) fadeOut(modalAddContactBtn, 200);
+    else fadeIn(modalAddContactBtn, 200, 'flex');
+  }
+
   // Кнопка модального окна "Добавить контакт"
   const modalAddContactBtn = document.querySelector('.modal__addNewContact-btn');
   // добавляет новый селект и инпут
@@ -556,6 +574,7 @@
     btn1.addEventListener('click', function() {
       const parent = newContactDiv.parentNode;
       parent.removeChild(newContactDiv);
+      checkContactcount(0);
     });
 
     // Монтируем селект и инпут в контейнер
@@ -566,6 +585,8 @@
 
     // Передаем select в плагин choices.js
     const choisesObj = choises(select);
+
+    checkContactcount(1);
 
     return { choisesObj, input };
   }
@@ -608,7 +629,9 @@
   // Отображаем модальное окно
   function showModal(title, client) {
     clearModalInputs();
+    newContactCount = 0;
     fadeIn(modal, 200, 'flex');
+    fadeIn(modalAddContactBtn, 200, 'flex');
 
     const h2 = document.querySelector('.modal__top h2');
 

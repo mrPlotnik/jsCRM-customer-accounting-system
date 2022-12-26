@@ -20,8 +20,9 @@
   flex-direction: column;
   align-items: center;
   width: 450px;
-  min-height: 400px;
+  max-height: 90vh;
   margin: 0 auto;
+  overflow-y: scroll;
   background-color: var(--color-white);
   box-shadow: 0px 0px 35px #00000055;
 }
@@ -116,6 +117,7 @@
 }
 .modal__newContact-content {
   width: 100%;
+
   /* display: none; */
 }
 .modal__newContact {
@@ -143,27 +145,31 @@
   background-color: var(--color-gray-10);
   transition: background-color var(--transition-duration) ease-in-out;
 }
-.choices__inner:hover {
-  background-color: var(--color-gray-15);
-}
-.choices__list[aria-expanded] .choices__item--selectable {
-  padding-right: 0;
-}
-.choices__list[aria-expanded] .choices__item {
-  font-size: 12px;
-}
-.is-open .choices__inner {
-  border-radius: 0;
+
+.choices {
+  overflow: visible;
 }
 .choices__list[aria-expanded] {
   border-radius: 0;
   margin-top: 0;
 }
+.choices__list[aria-expanded] .choices__list {
+  max-height: 150px;
+}
+.choices__list[aria-expanded] .choices__item {
+  font-size: 12px;
+}
+.choices__list[aria-expanded] .choices__item--selectable {
+  padding-right: 0;
+}
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
   background-color: var(--color-gray-10);
 }
-.choices {
-  overflow: visible;
+.choices__inner:hover {
+  background-color: var(--color-gray-15);
+}
+.is-open .choices__inner {
+  border-radius: 0;
 }
 .choices__list--dropdown {
   opacity: 0;
@@ -186,6 +192,8 @@
   margin: 0;
   rotate: 180deg;
 }
+
+
 
 .modal__input {
   width: 100%;
@@ -314,8 +322,7 @@
 .choices .instaIcon path:last-child,
 .choices .vkIcon path,
 .choices .tgIcon path,
-.choices .otherIcon path
-{
+.choices .otherIcon path {
   fill: var(--color-gray-40);
 }
 

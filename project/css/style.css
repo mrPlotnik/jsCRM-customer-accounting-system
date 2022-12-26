@@ -196,10 +196,38 @@ h1 {
   display: flex;
   transition: scale .1s ease-in-out;
 }
-.client__contact-link:hover {
-  scale: 1.2;
-}
+
 
 .tooltip {
   color: var(--color-accent-light);
+}
+
+
+
+
+.client__contact-link svg {
+  transition-property: fill, scale;
+  transition-duration: .1s;
+  transition-timing-function: ease-in-out;
+}
+
+.phoneIcon,
+.emailIcon path,
+.instaIcon path:last-child,
+.vkIcon path,
+.tgIcon path,
+.otherIcon path {
+  fill: var(--color-accent-light);
+}
+.phoneIcon:hover,
+.emailIcon:hover path,
+.instaIcon:hover path:last-child,
+.vkIcon:hover path,
+.tgIcon:hover path,
+.otherIcon:hover path {
+  fill: var(--color-accent);
+}
+
+.client__contact-link svg:hover {
+  scale: 1.2;
 }
