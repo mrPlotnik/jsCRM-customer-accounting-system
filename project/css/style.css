@@ -68,6 +68,10 @@ h1 {
   line-height: 33px;
 }
 
+.table {
+  min-width: 728px;
+}
+
 /* Сортировка */
 
 .sort__row {
@@ -114,14 +118,15 @@ h1 {
   margin-bottom: 20px;
 }
 .client-row {
-  height: 60px;
+  min-height: 60px;
+  max-height: 90px;
   margin: 0;
   padding: 10px 20px;
   border-bottom: 1px solid #C8C5D1;
 }
 
 .client-row .col:not(:last-child) {
-  padding-right: 20px;
+  padding-right: 13px;
 }
 .clients-wrap .col {
   flex-wrap: wrap;
@@ -133,9 +138,10 @@ h1 {
   line-height: 16px;
   color: var(--color-gray-19);
 }
-.client__time,
+.client__update span:first-child {
+  margin-right: 10px;
+}
 .client__time {
-  padding-left: 10px;
   color: var(--color-gray-19);
 }
 .client__actions {
@@ -143,20 +149,24 @@ h1 {
 }
 
 .client__id {
-  min-width: 12%;
+  flex-shrink: 0;
+  width: 105px;
 }
 .client__name {
-  min-width: 25%;
+  width: inherit;
 }
 .client__create,
 .client__update {
-  min-width: 15%;
+  min-width: 110px;
+  width: min-content;
 }
 .client__contacts {
-  min-width: 13%;
+  flex-shrink: 0;
+  width: 115px;
 }
 .client__actions {
-  min-width: 20%;
+  min-width: 80px;
+  width: min-content;
 }
 
 
@@ -216,6 +226,8 @@ h1 {
 .instaIcon path:last-child,
 .vkIcon path,
 .tgIcon path,
+.fbIcon path,
+.twIcon path:last-child,
 .otherIcon path {
   fill: var(--color-accent-light);
 }
@@ -224,10 +236,48 @@ h1 {
 .instaIcon:hover path:last-child,
 .vkIcon:hover path,
 .tgIcon:hover path,
+.fbIcon:hover path,
+.twIcon:hover path:last-child,
 .otherIcon:hover path {
   fill: var(--color-accent);
 }
 
 .client__contact-link svg:hover {
   scale: 1.2;
+}
+
+@media (max-width: 728px) {
+  /* .client-row {
+    padding: 5px 10px;
+  }
+  .client-row .col:not(:last-child) {
+    padding-right: 10px;
+  }
+
+  .client__id {
+    min-width: 15%;
+  }
+  .client__name {
+    min-width: 25%;
+  }
+  .client__create,
+  .client__update {
+    min-width: 15%;
+  }
+  .client__contacts {
+    min-width: 125px;
+  }
+  .client__actions {
+    min-width: 20%;
+  }
+
+  .client__id,
+  .client__name,
+  .client__create,
+  .client__update,
+  .client__contacts,
+  .client__actions {
+   word-break: break-all;
+  } */
+
 }

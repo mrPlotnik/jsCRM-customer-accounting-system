@@ -322,7 +322,8 @@
 .choices .instaIcon path:last-child,
 .choices .vkIcon path,
 .choices .tgIcon path,
-.choices .otherIcon path {
+.choices .fbIcon path,
+.choices .twIcon path:last-child {
   fill: var(--color-gray-40);
 }
 
