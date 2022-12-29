@@ -22,7 +22,7 @@
   width: 450px;
   max-height: 90vh;
   margin: 0 auto;
-  overflow-y: scroll;
+  overflow-y: auto;
   background-color: var(--color-white);
   box-shadow: 0px 0px 35px #00000055;
 }
@@ -117,8 +117,6 @@
 }
 .modal__newContact-content {
   width: 100%;
-
-  /* display: none; */
 }
 .modal__newContact {
   display: flex;
@@ -129,8 +127,9 @@
 
 .choices {
   flex-shrink: 0;
-  width: 123px;
+  width: 135px;
   margin-bottom: 0;
+  overflow: visible;
 }
 .choices__inner {
   display: flex;
@@ -144,10 +143,6 @@
 	font-size: 12px;
   background-color: var(--color-gray-10);
   transition: background-color var(--transition-duration) ease-in-out;
-}
-
-.choices {
-  overflow: visible;
 }
 .choices__list[aria-expanded] {
   border-radius: 0;
@@ -290,7 +285,6 @@
   text-align: center;
   font-size: 14px;
 }
-
 .modal__errors-wrap {
   display: none;
   flex-direction: column;
@@ -301,8 +295,6 @@
   color: red;
   font-size: 12px;
 }
-
-
 .choices__list--single {
   padding-left: 1px;
 }
@@ -326,5 +318,3 @@
 .choices .twIcon path:last-child {
   fill: var(--color-gray-40);
 }
-
-

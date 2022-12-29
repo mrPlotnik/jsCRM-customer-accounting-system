@@ -8,6 +8,8 @@
   const twIcon = '<svg class="twIcon" width="16" height="16" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="m0 0h32v32h-32z"/><path d="m16 0c8.836556 0 16 7.163444 16 16s-7.163444 16-16 16-16-7.163444-16-16 7.163444-16 16-16zm2.8844392 10c-.8155312-.00039875-1.5977768.3185138-2.1744446.8864965s-.9004568 1.338447-.9000516 2.1416957c0 .2345571.0290047.4683624.0763281.693898-2.4735114-.1243416-4.777484-1.275917-6.33981273-3.1687757-.26638508.4495677-.41827803.9652925-.41827803 1.5276281-.0010649 1.0136875.51366356 1.9604572 1.37085286 2.5214884-.50376554-.0187946-.97928966-.1593785-1.3891716-.3841624v.0375893c-.00205712 1.4426342 1.0296751 2.6862915 2.4653979 2.971808-.2572257.0654053-.5342967.1029946-.8098412.1029946-.1999797 0-.3907999-.0187947-.5808569-.0466107.404934 1.2327897 1.5599819 2.0762891 2.8752798 2.0997368-1.0887093.841353-2.4333459 1.2971153-3.81716869 1.2938228-.25722574 0-.49536944-.0097732-.74267251-.0375893 1.36169346.8630497 2.9798494 1.3599799 4.7216568 1.3599799 5.6536231 0 8.7472013-4.6129556 8.7472013-8.6162132 0-.1308107 0-.2616214-.0099226-.3931838.5995743-.4327694 1.1205962-.9622114 1.5410645-1.5659692-.5629708.2424151-1.1595866.4005355-1.7700488.4691142.6417355-.3758146 1.1223374-.9691898 1.3517708-1.6689638-.6025782.3529048-1.2626416.6003888-1.9509465.7314873-.5617749-.5909034-1.3609302-.9562715-2.2463363-.9562715z" fill="#9873FF"/></g></svg>';
   const otherIcon = '<svg class="otherIcon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16ZM3 8C3 5.24 5.24 3 8 3C10.76 3 13 5.24 13 8C13 10.76 10.76 13 8 13C5.24 13 3 10.76 3 8ZM9.5 6C9.5 5.17 8.83 4.5 8 4.5C7.17 4.5 6.5 5.17 6.5 6C6.5 6.83 7.17 7.5 8 7.5C8.83 7.5 9.5 6.83 9.5 6ZM5 9.99C5.645 10.96 6.75 11.6 8 11.6C9.25 11.6 10.355 10.96 11 9.99C10.985 8.995 8.995 8.45 8 8.45C7 8.45 5.015 8.995 5 9.99Z" fill="#9873FF"/></svg>';
 
+  const deleteIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_216_224)"><path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#F06A4D"/></g><defs><clipPath id="clip0_216_224"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>'
+
   // ------------------------------------
   // Методы сервера
   // ------------------------------------
@@ -74,11 +76,9 @@
   // ------------------------------------
   // Запуск CRM
   // ------------------------------------
-  const deleteIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_216_224)"><path d="M8 2C4.682 2 2 4.682 2 8C2 11.318 4.682 14 8 14C11.318 14 14 11.318 14 8C14 4.682 11.318 2 8 2ZM8 12.8C5.354 12.8 3.2 10.646 3.2 8C3.2 5.354 5.354 3.2 8 3.2C10.646 3.2 12.8 5.354 12.8 8C12.8 10.646 10.646 12.8 8 12.8ZM10.154 5L8 7.154L5.846 5L5 5.846L7.154 8L5 10.154L5.846 11L8 8.846L10.154 11L11 10.154L8.846 8L11 5.846L10.154 5Z" fill="#F06A4D"/></g><defs><clipPath id="clip0_216_224"><rect width="16" height="16" fill="white"/></clipPath></defs></svg>'
-
 
   // Создаем объект с методами сервера
-  let server = new Server();
+  const server = new Server();
 
   // Сюда будут монтироваться div.row с клиентами
   const CLIENTS_WRAP = document.querySelector('.clients-wrap');
@@ -90,9 +90,7 @@
 
   async function show() {
     // Копируем в переменную массив клиентов полученный с сервера
-    allClients = (await server.getClients()).slice(0);
-
-    // console.log(allClients);
+    allClientsGlobal = (await server.getClients()).slice(0);
 
     // Предсортировка всего массива по дате создания перед отрисовкой
     sortByCreateDate();
@@ -100,7 +98,7 @@
 
   // Создаем и заполняем елемент row для каждого клиента
   // Оставляем в глоб-м scope для перерисовывания при сортировке
-  function createRow(clients) {
+  function createRow(clients = allClientsGlobal) {
     // Удаляем дочерние DOM узлы
     deleteChildNode(CLIENTS_WRAP);
 
@@ -125,8 +123,6 @@
 
     // Добавляем ключ fullname в объекты
     clients.forEach((el) => el.fullname = getFullName(el));
-
-
 
 
     clients.forEach((el) => {
@@ -158,9 +154,7 @@
 
       // Контакты
       const сontacts = getContacts(clientData.contacts);
-      for(let i = 0; i < сontacts.length; i++) {
-        obj.clientContacts.append(сontacts[i].span);
-      }
+      сontacts.forEach((e) => obj.clientContacts.append(e.span));
 
       // Вешаем обработчики на все кнопки "Изменить" и "Удалить"
       obj.clientUpdateBtn.addEventListener('click', () => { showModalUpdate(clientData.id) });
@@ -168,15 +162,14 @@
 
       // Функция возвращает массив узлов span
       // с иконками контактов
-      function getContacts(contacts) {
+      function getContacts(сontacts) {
         let allContacts = [];
 
-        for(let i = 0; i < contacts.length; i++) {
+        сontacts.forEach((e) => {
           const emptySpan = createEmptySpan();
-
-          const fullSpan = insertData(emptySpan, contacts[i]);
-          allContacts.push(fullSpan);
-        }
+          const fullSpan = insertData(emptySpan, e);
+          allContacts.push(fullSpan)
+        });
 
         function createEmptySpan() {
           const span = document.createElement('span');
@@ -270,51 +263,51 @@
     function createEmptyRow() {
       const editIcon = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_216_219)"> <path d="M2 11.5002V14.0002H4.5L11.8733 6.62687L9.37333 4.12687L2 11.5002ZM13.8067 4.69354C14.0667 4.43354 14.0667 4.01354 13.8067 3.75354L12.2467 2.19354C11.9867 1.93354 11.5667 1.93354 11.3067 2.19354L10.0867 3.41354L12.5867 5.91354L13.8067 4.69354Z" fill="#9873FF"/></g><defs><clipPath id="clip0_216_219"> <rect width="16" height="16" fill="white"/></clipPath></defs></svg>'
 
-      let row = document.createElement('div');
+      const row = document.createElement('div');
       row.classList.add('row', 'client-row');
 
       // Id
-      let clientId = document.createElement('div');
+      const clientId = document.createElement('div');
       clientId.classList.add('col', 'client__id');
 
       // Имя
-      let clientName = document.createElement('div');
+      const clientName = document.createElement('div');
       clientName.classList.add('col', 'client__name');
 
       // Дата и время создания
-      let clientCreate = document.createElement('div');
+      const clientCreate = document.createElement('div');
       clientCreate.classList.add('col', 'client__create');
-      let clientCreateDate = document.createElement('span');
+      const clientCreateDate = document.createElement('span');
       clientCreate.appendChild(clientCreateDate);
-      let clientCreateTime = document.createElement('span');
+      const clientCreateTime = document.createElement('span');
       clientCreateTime.classList.add('client__time');
       clientCreate.appendChild(clientCreateTime);
 
       // Дата и время изменения
-      let clientUpdate = document.createElement('div');
+      const clientUpdate = document.createElement('div');
       clientUpdate.classList.add('col', 'client__update');
-      let clientUpdateDate = document.createElement('span');
+      const clientUpdateDate = document.createElement('span');
       clientUpdate.appendChild(clientUpdateDate);
-      let clientUpdateTime = document.createElement('span');
+      const clientUpdateTime = document.createElement('span');
       clientUpdateTime.classList.add('client__time');
       clientUpdate.appendChild(clientUpdateTime);
 
       //--- Кнопки действий
-      let clientActions = document.createElement('div');
+      const clientActions = document.createElement('div');
       // Кнопка "Изменить"
       clientActions.classList.add('col', 'client__actions');
-      let clientUpdateBtn = document.createElement('button');
+      const clientUpdateBtn = document.createElement('button');
       clientUpdateBtn.classList.add('btn-reset', 'client__update-btn');
       clientUpdateBtn.innerHTML = editIcon + 'Изменить';
       // Кнопка "Удалить"
-      let clientDeleteBtn = document.createElement('button');
+      const clientDeleteBtn = document.createElement('button');
       clientDeleteBtn.classList.add('btn-reset', 'client__delete-btn');
       clientDeleteBtn.innerHTML = deleteIcon + 'Удалить';
 
       clientActions.append(clientUpdateBtn, clientDeleteBtn);
 
       // Контакты
-      let clientContacts = document.createElement('div');
+      const clientContacts = document.createElement('div');
       clientContacts.classList.add('col', 'client__contacts');
 
       row.appendChild(clientId);
@@ -369,82 +362,80 @@
 
   function sortById() {
     if (sortByIdInvert) {
-      allClients.sort((a, b) => +a.id > +b.id ? 1 : -1)
+      allClientsGlobal.sort((a, b) => +a.id > +b.id ? 1 : -1)
       sortByIdInvert = 0;
     } else {
-      allClients.sort((a, b) => +a.id < +b.id ? 1 : -1)
+      allClientsGlobal.sort((a, b) => +a.id < +b.id ? 1 : -1)
       sortByIdInvert = 1;
     }
     sortActive(sortId);
-    createRow(allClients);
+    createRow();
   }
 
   function sortByName() {
     if (sortByNameInvert) {
-      allClients.sort((a, b) => a.fullname.toLowerCase() > b.fullname.toLowerCase() ? 1 : -1)
+      allClientsGlobal.sort((a, b) => a.fullname.toLowerCase() > b.fullname.toLowerCase() ? 1 : -1)
       sortByNameInvert = 0;
     } else {
-      allClients.sort((a, b) => a.fullname.toLowerCase() < b.fullname.toLowerCase() ? 1 : -1)
+      allClientsGlobal.sort((a, b) => a.fullname.toLowerCase() < b.fullname.toLowerCase() ? 1 : -1)
       sortByNameInvert = 1;
     }
     sortActive(sortName);
-    createRow(allClients);
+    createRow();
   }
 
   function sortByCreateDate(e) {
     // Сортировки нажатием на заголовок
     if (!sortByCreateDateInvert && e) {
-      allClients.sort((a, b) => {
-        const date = newDate(a, b);
+      allClientsGlobal.sort((a, b) => {
+        const date = newDate(a.createdAt, b.createdAt);
         return date.b - date.a;
       });
       sortByCreateDateInvert = 1;
     // Сортировки нажатием на заголовок
     } else if (sortByCreateDateInvert && e) {
-      allClients.sort((a, b) => {
-        const date = newDate(a, b);
+      allClientsGlobal.sort((a, b) => {
+        const date = newDate(a.createdAt, b.createdAt);
         return date.a - date.b;
       });
       sortByCreateDateInvert = 0;
     // Сортировки без нажатия
     } else {
-      allClients.sort((a, b) => {
-        const date = newDate(a, b);
+      allClientsGlobal.sort((a, b) => {
+        const date = newDate(a.createdAt, b.createdAt);
         return date.b - date.a;
       });
       sortByCreateDateInvert = 1;
     }
     sortActive(sortCreate);
-    createRow(allClients);
-
-    function newDate(a1, b1) {
-      const a = new Date(a1.createdAt);
-      const b = new Date(b1.createdAt);
-      return { a, b }
-    }
+    createRow();
   }
 
   function sortByUpdateDate() {
     if (sortByUpdateDateInvert) {
-      allClients.sort((a, b) => {
-        let dateA = new Date(a.updatedAt);
-        let dateB = new Date(b.updatedAt);
-        return dateA - dateB;
+      allClientsGlobal.sort((a, b) => {
+        const date = newDate(a.updatedAt, b.updatedAt);
+        return date.a - date.b;
       });
       sortByUpdateDateInvert = 0;
     } else {
-      allClients.sort((a, b) => {
-        let dateA = new Date(a.updatedAt);
-        let dateB = new Date(b.updatedAt);
-        return dateB - dateA;
+      allClientsGlobal.sort((a, b) => {
+        const date = newDate(a.updatedAt, b.updatedAt);
+        return date.b - date.a;
       });
       sortByUpdateDateInvert = 1;
     }
     sortActive(sortUpdate);
-    createRow(allClients);
+    createRow();
   }
 
   let activeSort = null;
+
+  function newDate(a1, b1) {
+    const a = new Date(a1);
+    const b = new Date(b1);
+    return { a, b }
+  }
 
   function sortActive(el) {
     // Ищем svg в переданном элементе
@@ -483,6 +474,11 @@
   // Нужны для поведения лейблов и их очистки
   const modalAllInputsWrap = document.querySelectorAll('.modal__input-wrap');
 
+  // Кнопка модального окна "Добавить контакт"
+  const modalAddContactBtn = document.querySelector('.modal__addNewContact-wrap');
+  // добавляет новый селект и инпут
+  modalAddContactBtn.addEventListener('click', createNewContact)
+
   let newContactCount = 0;
 
   // Если контактов 10, то скрываем кнопку
@@ -492,11 +488,6 @@
     if (newContactCount === 10) fadeOut(modalAddContactBtn, 200);
     else fadeIn(modalAddContactBtn, 200, 'flex');
   }
-
-  // Кнопка модального окна "Добавить контакт"
-  const modalAddContactBtn = document.querySelector('.modal__addNewContact-btn');
-  // добавляет новый селект и инпут
-  modalAddContactBtn.addEventListener('click', createNewContact)
 
   // Кнопка модального окна "Сохранить"
   const modalSaveBtn = document.getElementById('modal__primary-btn');
@@ -618,8 +609,9 @@
       const allSelects = document.querySelectorAll('.modal__select');
       const allContactInputs = document.querySelectorAll('.modal__input');
 
-      for(let i = 0; i < allSelects.length; i++) {
-        const selectValue = allSelects[i].value;
+
+      allSelects.forEach((e, i) => {
+        const selectValue = e.value;
         let inputValue = null;
         if (allContactInputs[i].value === '') {
           // если инпут пустой, то ничего не делаем
@@ -627,14 +619,14 @@
         }
         else {
           inputValue = allContactInputs[i].value;
-          let obj = {};
+          const obj = {};
 
           obj.type = selectValue;
           obj.value = inputValue;
 
           data.contacts.push(obj)
         }
-      }
+      })
     }
     return data;
   }
@@ -656,12 +648,14 @@
       inputs.surnameInput.value = client.surname;
       inputs.lastnameInput.value = client.lastName
 
-      for(let i = 0; i < client.contacts.length; i++) {
+
+      client.contacts.forEach((e) => {
         const contact = createNewContact();
         // Тут метод из библиотеки choises.js
-        contact.choisesObj.setChoiceByValue(client.contacts[i].type);
-        contact.input.value = client.contacts[i].value;
-      }
+        contact.choisesObj.setChoiceByValue(e.type);
+        contact.input.value = e.value;
+      })
+
       modalSaveBtn.addEventListener('click', updateClient);
       modalSecondaryBtn.innerHTML = 'Удалить клиента';
       modalSecondaryBtn.addEventListener('click', () => { showModalDelete(client.id) });
@@ -675,9 +669,9 @@
 
     // Поведение label`ов
     (function() {
-      for(let i = 0; i < modalAllInputsWrap.length; i++) {
-        const label = modalAllInputsWrap[i].firstElementChild;
-        const input = modalAllInputsWrap[i].lastElementChild;
+      modalAllInputsWrap.forEach((e) => {
+        const label = e.firstElementChild;
+        const input = e.lastElementChild;
 
         label.classList.remove('modal__label--active');
 
@@ -692,7 +686,8 @@
             label.classList.remove('modal__label--active');
           }
         }
-      }
+      })
+
     })();
   }
 
@@ -720,16 +715,13 @@
   // удаление инпутов и селектов
   function clearModalInputs() {
     // Очистка инпутов
-    for(let i = 0; i < modalAllInputsWrap.length; i++) {
-      const input = modalAllInputsWrap[i].lastElementChild.value = '';
-    }
+    modalAllInputsWrap.forEach((e) => e.lastElementChild.value = '');
 
     // Удаление селектов и инпутов контактов
     const parent = document.querySelector('.modal__newContact-content');
     while (parent.firstChild) {
-      parent.removeChild(parent.firstChild); // Повторяется
+      parent.removeChild(parent.firstChild);
     }
-
   };
 
   // ------------------------------------
@@ -806,15 +798,15 @@
     clearTimeout(timerId);
 
     timerId = setTimeout(async () => {
-      let val = e.target.value.trim();
+      const val = e.target.value.trim();
 
       // Если введенное значение не пустое
       if (val != '') {
         // Запрос на сервер
-        const allClients = await server.getClients();
+        const allClientsLocal = await server.getClients();
 
-        let clients = filter(allClients);
-        let allItems = createItem(clients);
+        const clients = filter(allClientsLocal);
+        const allItems = createItem(clients);
         show(allItems);
 
         // Формируем массив. Только fullname и id
@@ -856,17 +848,21 @@
             else e.classList.remove('hide')
           })
         }
+
+        function showClient(id) {
+          deleteChildNode(searchList);
+          const client = allClientsLocal.filter((el) => el.id === id);
+          allClientsGlobal = client;
+          createRow();
+        }
+
       // Иначе показываем весь список
       } else {
-        createRow(allClients);
+        // Копируем в переменную массив клиентов полученный с сервера
+        allClientsGlobal = (await server.getClients()).slice(0);
+        createRow();
       }
     }, 300);
-
-    function showClient(id) {
-      deleteChildNode(searchList);
-      const client = allClients.filter((el) => el.id === id);
-      createRow(client);
-    }
   }
 
   // ------------------------------------
@@ -910,13 +906,13 @@
   function showError(messages) {
     deleteChildNode(errorsWrap);
 
-    for (let i = 0; i < messages.length; i++) {
-      let errorSpan = document.createElement('span');
+    messages.forEach((e) => {
+      const errorSpan = document.createElement('span');
       errorSpan.classList.add('error');
-      errorSpan.innerHTML = messages[i].message;
+      errorSpan.innerHTML = e.message;
       errorsWrap.append(errorSpan);
       fadeIn(errorsWrap, 0, 'flex');
-    }
+    });
   }
 
   // Если кликнуть вне диалоговых окон,
@@ -960,6 +956,7 @@
 
   // Появление
   function fadeIn(el, timeout, display) {
+    // el.classList.add('fadeIn');
     el.style.opacity = 0;
     el.style.display = display || 'block';
     el.style.transition = `opacity ${timeout}ms`;
@@ -970,6 +967,7 @@
 
   // Изчезновение
   function fadeOut(el, timeout) {
+    // el.classList.add('fadeOut');
     el.style.opacity = 1;
     el.style.transition = `opacity ${timeout}ms`;
     el.style.opacity = 0;
