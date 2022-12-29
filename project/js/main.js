@@ -92,16 +92,24 @@
     // Копируем в переменную массив клиентов полученный с сервера
     allClients = (await server.getClients()).slice(0);
 
+    // console.log(allClients);
+
+    // Предсортировка всего массива по дате создания перед отрисовкой
+    sortByCreateDate();
+  }
+
+  // Создаем и заполняем елемент row для каждого клиента
+  // Оставляем в глоб-м scope для перерисовывания при сортировке
+  function createRow(clients) {
+    // Удаляем дочерние DOM узлы
+    deleteChildNode(CLIENTS_WRAP);
+
     // --------------------------------------------
     // Подготовительные изменения массива контактов
     // --------------------------------------------
 
-    // Добавляем ключ fullname в объекты
-    allClients.forEach((el) => el.fullname = getFullName(el));
-
-    // Добавляем ключ id для каждого контакта
-    // для более простой сортировки
-    allClients.forEach((el) => {
+    // Добавляем ключ id для каждого контакта, для более простой сортировки
+    clients.forEach((el) => {
       const contacts = el.contacts;
       contacts.forEach((e) => {
         if (e.type === 'phone') e.id = 1;
@@ -113,33 +121,15 @@
     });
 
     // Предсортировка контактов у каждого клиента
-    allClients.forEach((el) => sortContacts(el.contacts));
+    clients.forEach((el) => sortContacts(el.contacts));
 
-    // Предсортировка всего массива по дате создания
-    // перед отрисовкой
-    sortByCreateDate();
+    // Добавляем ключ fullname в объекты
+    clients.forEach((el) => el.fullname = getFullName(el));
 
-    console.log(allClients);
 
-    // Создаем и заполняем данными div.row для каждого клиента
-    createRow(allClients);
 
-    // Конкатинируем имена
-    function getFullName(data) {
-      const name = data.name;
-      const surname = data.surname;
-      const lastname = data.lastName;
-      return `${surname} ${name} ${lastname}`;
-    }
-  }
 
-  // Создаем и заполняем елемент row для каждого клиента
-  // Оставляем в глоб-м scope для перерисовывания при сортировке
-  function createRow(allClients) {
-    // Удаляем дочерние DOM узлы
-    deleteChildNode(CLIENTS_WRAP);
-
-    allClients.forEach((el) => {
+    clients.forEach((el) => {
       // Берем "пустой" row (объект из узлов DOM)
       const emptyRow = createEmptyRow();
       // заполняем его
@@ -348,6 +338,7 @@
         clientDeleteBtn
       }
     }
+
   };
 
   // ------------------------------------
@@ -400,24 +391,37 @@
     createRow(allClients);
   }
 
-  function sortByCreateDate() {
-    if (sortByCreateDateInvert) {
+  function sortByCreateDate(e) {
+    // Сортировки нажатием на заголовок
+    if (!sortByCreateDateInvert && e) {
       allClients.sort((a, b) => {
-        let dateA = new Date(a.createdAt);
-        let dateB = new Date(b.createdAt);
-        return dateA - dateB;
+        const date = newDate(a, b);
+        return date.b - date.a;
+      });
+      sortByCreateDateInvert = 1;
+    // Сортировки нажатием на заголовок
+    } else if (sortByCreateDateInvert && e) {
+      allClients.sort((a, b) => {
+        const date = newDate(a, b);
+        return date.a - date.b;
       });
       sortByCreateDateInvert = 0;
+    // Сортировки без нажатия
     } else {
       allClients.sort((a, b) => {
-        let dateA = new Date(a.createdAt);
-        let dateB = new Date(b.createdAt);
-        return dateB - dateA;
+        const date = newDate(a, b);
+        return date.b - date.a;
       });
       sortByCreateDateInvert = 1;
     }
     sortActive(sortCreate);
     createRow(allClients);
+
+    function newDate(a1, b1) {
+      const a = new Date(a1.createdAt);
+      const b = new Date(b1.createdAt);
+      return { a, b }
+    }
   }
 
   function sortByUpdateDate() {
@@ -784,8 +788,98 @@
   }
 
   // ------------------------------------
-  // Общие функции модальных окон
+  // Поиск с автодополнением
   // ------------------------------------
+
+  const searchInput = document.querySelector('.search__input');
+  const searchList = document.querySelector('.search__wrap ul');
+
+  searchInput.addEventListener('input', (e) => { search(e) })
+
+  let timerId;
+
+  function search(e) {
+
+    // Очищаем поисковую выдачу
+    deleteChildNode(searchList);
+    // Сбрасываем задержку
+    clearTimeout(timerId);
+
+    timerId = setTimeout(async () => {
+      let val = e.target.value.trim();
+
+      // Если введенное значение не пустое
+      if (val != '') {
+        // Запрос на сервер
+        const allClients = await server.getClients();
+
+        let clients = filter(allClients);
+        let allItems = createItem(clients);
+        show(allItems);
+
+        // Формируем массив. Только fullname и id
+        function filter(clients) {
+          let newArr = [];
+          clients.forEach((e, i) => {
+            const obj = {};
+            // Конкатенируем имена
+            obj.fullname = getFullName(e);
+            // Не забываем id взять
+            obj.id = clients[i].id;
+            // Пушим
+            newArr.push(obj);
+          });
+          return newArr;
+        }
+
+        // Создаем елементы li для поисковой выдачи
+        function createItem(clientsArr) {
+          let newArr = [];
+          clientsArr.forEach((e) => {
+            const item = document.createElement('li');
+            // Прписываем полное имя
+            item.innerHTML = e.fullname;
+            // Вешаем обработчик
+            item.addEventListener('click', () => { showClient(e.id) })
+            searchList.append(item);
+            newArr.push(item);
+          })
+          return newArr;
+        }
+
+        // Показываем или скрываеи элементы в зависимости от того что ввел юзер
+        function show(items) {
+          items.forEach((e) => {
+            if (e.innerText.search(val) == -1) {
+              e.classList.add('hide')
+            }
+            else e.classList.remove('hide')
+          })
+        }
+      // Иначе показываем весь список
+      } else {
+        createRow(allClients);
+      }
+    }, 300);
+
+    function showClient(id) {
+      deleteChildNode(searchList);
+      const client = allClients.filter((el) => el.id === id);
+      createRow(client);
+    }
+  }
+
+  // ------------------------------------
+  // Общие функции
+  // ------------------------------------
+
+  // Конкатинируем имена
+  function getFullName(data) {
+    const name = data.name;
+    const surname = data.surname;
+    const lastname = data.lastName;
+    return `${surname} ${name} ${lastname}`;
+  }
 
   // Если успешно, то
   // закрываем модальное окно и перерисовываем приложение
